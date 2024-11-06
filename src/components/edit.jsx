@@ -1,7 +1,10 @@
 import mainStore from "../stores/mainStore.js";
+import { updateFile } from "../utilities.js";
+import driveData from "../stores/driveData.js";
 
 const Edit = ({data = false, closeButton = () => {}}) => {
   const { type, year } = mainStore();
+  const { meta } = driveData();
 
   return (
     <>
@@ -11,7 +14,7 @@ const Edit = ({data = false, closeButton = () => {}}) => {
         <button onClick={closeButton}>Cancel</button>
         <button onClick={() => {
           //TODO: save logic
-          closeButton();
+          updateFile(meta.fileIds.movies, {'test': 1}).then(closeButton)
         }}>Save</button>
       </div>
     </>
