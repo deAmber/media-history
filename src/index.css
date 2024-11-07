@@ -62,6 +62,38 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+.react-micro-modal--portal [role=dialog] {
+  background-color: #242424 !important;
+}
+
+.react-select__control {
+  background-color: white;
+  border: 1px solid black;
+  padding: 0.25rem;
+}
+.react-select__control * {
+  color: black;
+}
+
+.react-select__menu {
+  background-color: white;
+  border: 1px solid black;
+  padding: 0.25rem;
+}
+.react-select__menu * {
+  color: black;
+}
+.react-select__menu .react-select__option {
+  padding: 0.25rem;
+}
+.react-select__menu .react-select__option:hover {
+  background-color: lightslategray;
+}
+.react-select__menu .react-select__option--is-selected {
+  background-color: black;
+  color: white;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

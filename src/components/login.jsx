@@ -6,10 +6,53 @@ import driveData from "../stores/driveData.js";
 const ClientId = "803994679308-qk0cpk827asnvoshdtegmuiq5igl8rbc.apps.googleusercontent.com";
 
 const Login = () => {
-  const { setUser } = mainStore();
+  const { setUser, setYear } = mainStore();
   const { setMeta, meta, setMovies } = driveData();
   const [ loginError, setLoginError ] = useState(false);
   let fileIDs = {};
+  //Lists all needed files and their default starting values
+  //TODO: more files, more setstores
+  const files = [
+    {
+      name: 'metaData',
+      default: {'people': [], 'cinemas': [], 'years': [], 'movies': {}, 'tv': {}},
+      store: setMeta
+    },
+    {
+      name: 'movies',
+      default: {},
+      store: setMovies
+    },
+  ];
+
+  /**
+   * Deletes a given list of Google Drive files.
+   * @param list
+   */
+  const deleteFiles = (list) => {
+    console.log(list)
+    list.forEach(v => {
+      gapi.client.drive.files.delete({
+        fileId: v.id
+      }).then(v => {
+        console.log(v)
+      });
+    })
+  }
+
+  //TODO: temp function - delete me
+  window.deleteAll = async () => {
+    for (let i = 0; i < files.length; i++) {
+      const response = await gapi.client.drive.files.list({
+        q: `name='${files[i].name}' and 'appDataFolder' in parents`,
+        spaces: 'appDataFolder',
+        field: 'files(id, name)',
+      });
+      if (response?.result?.files?.length > 0) {
+        deleteFiles(response.result.files);
+      }
+    }
+  }
 
   useEffect(() => {
     const initClient = () => {
@@ -53,21 +96,6 @@ const Login = () => {
       } catch (error) {
         console.log('Error reading file contents:', error)
       }
-    }
-
-    /**
-     * Deletes a given list of Google Drive files.
-     * @param list
-     */
-    const deleteFiles = (list) => {
-      console.log(list)
-      list.forEach(v => {
-        gapi.client.drive.files.delete({
-          fileId: v.id
-        }).then(v => {
-          console.log(v)
-        });
-      })
     }
 
     /**
@@ -121,21 +149,6 @@ const Login = () => {
       }
     }
 
-    //Lists all needed files and their default starting values
-    //TODO: more files, more setstores
-    let files = [
-      {
-        name: 'metaData',
-        default: {'people': [], 'cinemas': [], 'movies': {}, 'tv': {}},
-        store: setMeta
-      },
-      {
-        name: 'movies',
-        default: {},
-        store: setMovies
-      },
-    ];
-
     //Gets contents of files or creates them if they do not exist
     files.forEach(v => {
       console.log('Loading file', v.name)
@@ -146,6 +159,9 @@ const Login = () => {
           if (v.name === 'metaData') {
             content.fileIds = fileIDs;
             v.store(content);
+            if (content['years'].length > 0) {
+              setYear({label: content['years'][0], value: content['years'][0]});
+            }
           } else {
             v.store(content);
           }

@@ -3,14 +3,14 @@ import { Link, useLocation } from "react-router-dom";
 import Select from "react-select";
 import MicroModal from "react-micro-modal";
 import mainStore from "../stores/mainStore.js";
-import metaStore from "../stores/metaStats.js";
+import driveData from "../stores/driveData.js";
 import Edit from "./edit.jsx";
 import { gapi } from "gapi-script";
 
 const Nav = () => {
   const location = useLocation();
   const { type, setType, year, setYear, setUser } = mainStore();
-  const { supportedYears, addSupportedYear } = metaStore();
+  const { meta } = driveData();
   const [ addModal, setAddModal ] = useState(false);
 
   return (
@@ -43,8 +43,10 @@ const Nav = () => {
         {value: "tv", label: "TV Shows"},
         {value: "game", label: "Video Games"},
         {value: "book", label: "Books"},
-      ]} value={type} onChange={setType} />
-      <Select options={supportedYears.map(v => {return {label: v, value: v}})} value={year} onChange={setYear}/>
+      ]} value={type} onChange={setType} unstyled classNamePrefix={'react-select'}/>
+      {meta['years'] && <Select options={meta['years'].map(v => {return {label: v, value: v}})}
+              value={year} isDisabled={meta['years'].length === 0}
+              onChange={setYear} unstyled classNamePrefix={'react-select'}/>}
     </div>
   )
 }
