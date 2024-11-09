@@ -1,0 +1,267 @@
+/*
+ * Colours from NextUI.
+ * https://www.figma.com/design/MBFftXCnGZXmbYlt9SiegK/NextUI-Figma-Kit-(Community)-(Community)?node-id=5-1194
+ */
+
+body, body.lightMode {
+    /*Layout*/
+    --background: #FFFFFF;
+    --foreground: #11181C;
+    --filter-foreground: brightness(0) saturate(100%) invert(6%) sepia(8%) saturate(2157%) hue-rotate(157deg) brightness(98%) contrast(93%);
+    --divider: #11111126;
+    --focus: #006FEE;
+    /*Content*/
+    --content1: #FFFFFF;
+    --content2: #F4F4F5;
+    --content3: #E4E4E7;
+    --content4: #D4D4D8;
+    /*Base*/
+    --default: #D4D4D4;
+    --primary: #006FEE;
+    --secondary: #7828C8;
+    --success: #17C964;
+    --warning: #F5A524;
+    --danger: #F31260;
+    /*Default*/
+    --default-50: #FAFAFA;
+    --default-100: #F4F4F5;
+    --default-200: #E4E4E7;
+    --default-300: #D4D4D8;
+    --default-400: #A1A1AA;
+    --default-500: #71717A;
+    --default-600: #52525B;
+    --default-700: #3F3F46;
+    --default-800: #27272A;
+    --default-900: #18181B;
+    /*Primary*/
+    --primary-50: #E6F1Fe;
+    --primary-100: #CCE3FD;
+    --primary-200: #99C7FB;
+    --primary-300: #66AAF9;
+    --primary-400: #338EF7;
+    --primary-500: #006FEE;
+    --primary-600: #005BC4;
+    --primary-700: #004493;
+    --primary-800: #002E62;
+    --primary-900: #001731;
+    /*Secondary*/
+    --secondary-50: #F2EAFA;
+    --secondary-100: #E4D4F7;
+    --secondary-200: #C9A9E9;
+    --secondary-300: #AE7EDE;
+    --secondary-400: #9353D3;
+    --secondary-500: #7828C8;
+    --secondary-600: #6020A0;
+    --secondary-700: #481878;
+    --secondary-800: #301050;
+    --secondary-900: #180828;
+    /*Success*/
+    --success-50: #E8FAF0;
+    --success-100: #D1F4E0;
+    --success-200: #A2E9C1;
+    --success-300: #74DFA2;
+    --success-400: #45D483;
+    --success-500: #17C964;
+    --success-600: #12A150;
+    --success-700: #0E793C;
+    --success-800: #095028;
+    --success-900: #052814;
+    /*Warning*/
+    --warning-50: #FEFCE8;
+    --warning-100: #FDEDD3;
+    --warning-200: #FBDBA7;
+    --warning-300: #F9C97C;
+    --warning-400: #F7B750;
+    --warning-500: #F5A524;
+    --warning-600: #C4841D;
+    --warning-700: #936316;
+    --warning-800: #62420E;
+    --warning-900: #312107;
+    /*Danger*/
+    --danger-50: #FEE7EF;
+    --danger-100: #FDD0DF;
+    --danger-200: #FAA0BF;
+    --danger-300: #F871A0;
+    --danger-400: #F54180;
+    --danger-500: #F31260;
+    --danger-600: #C20E4D;
+    --danger-700: #920B3A;
+    --danger-800: #610726;
+    --danger-900: #310413;
+}
+
+/*DarkMode usage*/
+@media (prefers-color-scheme: dark) {
+    body:not(.lightMode) {
+        /*Layout*/
+        --background: #000000;
+        --foreground: #ECEDEE;
+        --filter-foreground: brightness(0) saturate(100%) invert(96%) sepia(10%) saturate(21%) hue-rotate(168deg) brightness(99%) contrast(92%);
+        --divider: #FFFFFF26;
+        --focus: #006FEE;
+        /*Content*/
+        --content1: #18181B;
+        --content2: #27272A;
+        --content3: #3F3F46;
+        --content4: #52525B;
+        /*Base*/
+        --default: #3F3F46;
+        --primary: #006FEE;
+        --secondary: #9353D3;
+        --success: #17C964;
+        --warning: #F5A524;
+        --danger: #F31260;
+        /*Default*/
+        --default-50: #18181B;
+        --default-100: #27272A;
+        --default-200: #3F3F46;
+        --default-300: #52525B;
+        --default-400: #71717A;
+        --default-500: #A1A1AA;
+        --default-600: #D4D4D8;
+        --default-700: #E4E4E7;
+        --default-800: #F4F4F5;
+        --default-900: #FAFAFA;
+        /*Primary*/
+        --primary-50: #001731;
+        --primary-100: #002E62;
+        --primary-200: #004493;
+        --primary-300: #005BC4;
+        --primary-400: #006FEE;
+        --primary-500: #338EF7;
+        --primary-600: #66AAF9;
+        --primary-700: #99C7FB;
+        --primary-800: #CCE3FD;
+        --primary-900: #E6F1Fe;
+        /*Secondary*/
+        --secondary-50: #180828;
+        --secondary-100: #301050;
+        --secondary-200: #481878;
+        --secondary-300: #6020A0;
+        --secondary-400: #7828C8;
+        --secondary-500: #9353D3;
+        --secondary-600: #AE7EDE;
+        --secondary-700: #C9A9E9;
+        --secondary-800: #E4D4F7;
+        --secondary-900: #F2EAFA;
+        /*Success*/
+        --success-50: #052814;
+        --success-100: #095028;
+        --success-200: #0E793C;
+        --success-300: #12A150;
+        --success-400: #17C964;
+        --success-500: #45D483;
+        --success-600: #74DFA2;
+        --success-700: #A2E9C1;
+        --success-800: #D1F4E0;
+        --success-900: #E8FAF0;
+        /*Warning*/
+        --warning-50: #312107;
+        --warning-100: #62420E;
+        --warning-200: #936316;
+        --warning-300: #C4841D;
+        --warning-400: #F5A524;
+        --warning-500: #F7B750;
+        --warning-600: #F9C97C;
+        --warning-700: #FBDBA7;
+        --warning-800: #FDEDD3;
+        --warning-900: #FEFCE8;
+        /*Danger*/
+        --danger-50: #310413;
+        --danger-100: #610726;
+        --danger-200: #920B3A;
+        --danger-300: #C20E4D;
+        --danger-400: #F31260;
+        --danger-500: #F54180;
+        --danger-600: #F871A0;
+        --danger-700: #FAA0BF;
+        --danger-800: #FDD0DF;
+        --danger-900: #FEE7EF;
+    }
+}
+body.darkMode {
+    /*Layout*/
+    --background: #000000;
+    --foreground: #ECEDEE;
+    --filter-foreground: brightness(0) saturate(100%) invert(96%) sepia(10%) saturate(21%) hue-rotate(168deg) brightness(99%) contrast(92%);
+    --divider: #FFFFFF26;
+    --focus: #006FEE;
+    /*Content*/
+    --content1: #18181B;
+    --content2: #27272A;
+    --content3: #3F3F46;
+    --content4: #52525B;
+    /*Base*/
+    --default: #3F3F46;
+    --primary: #006FEE;
+    --secondary: #9353D3;
+    --success: #17C964;
+    --warning: #F5A524;
+    --danger: #F31260;
+    /*Default*/
+    --default-50: #18181B;
+    --default-100: #27272A;
+    --default-200: #3F3F46;
+    --default-300: #52525B;
+    --default-400: #71717A;
+    --default-500: #A1A1AA;
+    --default-600: #D4D4D8;
+    --default-700: #E4E4E7;
+    --default-800: #F4F4F5;
+    --default-900: #FAFAFA;
+    /*Primary*/
+    --primary-50: #001731;
+    --primary-100: #002E62;
+    --primary-200: #004493;
+    --primary-300: #005BC4;
+    --primary-400: #006FEE;
+    --primary-500: #338EF7;
+    --primary-600: #66AAF9;
+    --primary-700: #99C7FB;
+    --primary-800: #CCE3FD;
+    --primary-900: #E6F1Fe;
+    /*Secondary*/
+    --secondary-50: #180828;
+    --secondary-100: #301050;
+    --secondary-200: #481878;
+    --secondary-300: #6020A0;
+    --secondary-400: #7828C8;
+    --secondary-500: #9353D3;
+    --secondary-600: #AE7EDE;
+    --secondary-700: #C9A9E9;
+    --secondary-800: #E4D4F7;
+    --secondary-900: #F2EAFA;
+    /*Success*/
+    --success-50: #052814;
+    --success-100: #095028;
+    --success-200: #0E793C;
+    --success-300: #12A150;
+    --success-400: #17C964;
+    --success-500: #45D483;
+    --success-600: #74DFA2;
+    --success-700: #A2E9C1;
+    --success-800: #D1F4E0;
+    --success-900: #E8FAF0;
+    /*Warning*/
+    --warning-50: #312107;
+    --warning-100: #62420E;
+    --warning-200: #936316;
+    --warning-300: #C4841D;
+    --warning-400: #F5A524;
+    --warning-500: #F7B750;
+    --warning-600: #F9C97C;
+    --warning-700: #FBDBA7;
+    --warning-800: #FDEDD3;
+    --warning-900: #FEFCE8;
+    /*Danger*/
+    --danger-50: #310413;
+    --danger-100: #610726;
+    --danger-200: #920B3A;
+    --danger-300: #C20E4D;
+    --danger-400: #F31260;
+    --danger-500: #F54180;
+    --danger-600: #F871A0;
+    --danger-700: #FAA0BF;
+    --danger-800: #FDD0DF;
+    --danger-900: #FEE7EF;
+}

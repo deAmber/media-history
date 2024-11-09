@@ -1,0 +1,252 @@
+/*
+ * Colours from NextUI.
+ * https://www.figma.com/design/MBFftXCnGZXmbYlt9SiegK/NextUI-Figma-Kit-(Community)-(Community)?node-id=0-1&m=dev
+ */
+@import "./variables";
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+//Inputs
+form {
+  .inputWrapper:not(:first-of-type) {
+    margin-top: $unit-6;
+  }
+}
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: $unit-3;
+  label, .label {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: var(--default-600);
+  }
+  &.required {
+    label, .label {
+      &:after {
+        content: '*';
+        color: var(--danger);
+      }
+    }
+  }
+}
+input, select {
+  box-shadow: $shadow-sm;
+  border-radius: $rounded-medium;
+  background-color: var(--default-100);
+  width: 100%;
+  padding: $unit-1 $unit-2;
+  font-size: 0.875rem;
+  line-height: 20px;
+  color: var(--foreground);
+  appearance: none;
+  border: none;
+  &:focus-visible {
+    background-color: var(--default-200);
+  }
+}
+//React Select
+.react-select__control {
+  background-color: var(--default-100);
+  border: none;
+  border-radius: $rounded-medium;
+  padding: $unit-1 $unit-2;
+  * {
+    color: var(--foreground);
+    cursor: pointer;
+  }
+}
+.react-select__menu {
+  margin-top: $unit-1;
+  background-color: var(--content1);
+  border-radius: $rounded-small;
+  box-shadow: $shadow-sm;
+  padding: $unit-2;
+  min-width: 200px;
+  width: fit-content;
+  border: 1px solid var(--default-100);
+  * {
+    color: var(--foreground);
+  }
+  .react-select__option {
+    padding: $unit-1_5 $unit-2;
+    background-color: var(--content1);
+    border-radius: $rounded-small;
+    cursor: pointer;
+    &:hover {
+      background-color: var(--default);
+    }
+    &--is-selected {
+      background-color: var(--content1);
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: $unit-2;
+      &::after {
+        content: "";
+        background-image: url("../images/essential/tick-circle.svg");
+        display: inline-block;
+        width: $unit-4;
+        height: $unit-4;
+        background-size: $unit-4;
+        filter: var(--filter-foreground);
+      }
+    }
+  }
+}
+
+//buttons
+button:not(.tab), .button {
+  border-radius: $rounded-small;
+  padding: $unit-0 $unit-4;
+  height: $unit-10;
+  appearance: none;
+  border: none;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: var(--foreground);
+  background-color: var(--default);
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+  //sizes
+  &.sm {
+    height: $unit-8;
+    padding: $unit-0 $unit-3;
+  }
+  &.lg {
+    height: $unit-12;
+    padding: $unit-0 $unit-6;
+  }
+  &.iconOnly {
+    padding: $unit-0;
+    width: $unit-10;
+    &.sm {
+      width: $unit-8;
+    }
+    &.lg {
+      width: $unit-12;
+    }
+  }
+  //colours
+  &.primary {
+    background-color: var(--primary);
+  }
+  &.secondary {
+    background-color: var(--secondary);
+  }
+  &.success {
+    background-color: var(--success);
+  }
+  &.warning {
+    background-color: var(--warning);
+  }
+  &.danger {
+    background-color: var(--danger);
+  }
+}
+.buttonGroup {
+  button, .button {
+    &:not(:first-of-type) {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+    &:not(:last-of-type) {
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+    }
+  }
+}
+
+//Tabs
+.tab {
+  border-radius: $rounded-small;
+  padding: $unit-1 $unit-3;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  text-align: center;
+  color: var(--default-500);
+  border: none;
+  background-color: transparent;
+  text-decoration: none;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.5;
+    color: var(--default-500);
+  }
+  &.active {
+    background-color: var(--background);
+    color: var(--foreground);
+    pointer-events: none;
+  }
+  &.sm {
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+  &.lg {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+}
+.tabGroup {
+  margin-left: auto;
+  width: fit-content;
+  margin-right: auto;
+  border-radius: $rounded-medium;
+  padding: $unit-1;
+  background-color: var(--default-100);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  overflow-x: auto;
+  gap: $unit-2;
+  &.sm .tab {
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+  &.lg .tab {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+}
+
+//Modal
+.react-micro-modal--portal {
+  &.open::before {
+    content: "";
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    pointer-events: all;
+  }
+  [role="dialog"] {
+    background-color: var(--content1) !important;
+    min-width: 50% !important;
+    max-height: 70%;
+    overflow-x: auto !important;
+    padding: $unit-6 !important;
+    border-radius: $rounded-medium !important;
+    box-shadow: $shadow-lg;
+    .title {
+      margin-bottom: $unit-5;
+    }
+    .content {
+      overflow-x: auto;
+    }
+    .footer {
+      margin-top: $unit-5;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      gap: $unit-4;
+    }
+  }
+}

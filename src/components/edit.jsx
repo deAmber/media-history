@@ -42,33 +42,49 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
 
   return (
     <>
-      <h2>{data ? 'Edit <name>' : "Add new media"}</h2>
-      <label>Media type</label>
-      {!data && <Select unstyled classNamePrefix={'react-select'} options={[
-        {value: "movie", label: "Movies"},
-        {value: "tv", label: "TV Shows"},
-        {value: "game", label: "Video Games"},
-        {value: "book", label: "Books"},
-      ]} value={editType} onChange={setEditType} />}
-      <form id={'editForm'} onSubmit={(e) => {
-        //dont reload
-        e.preventDefault();
-        //TODO: save logic
-        const formData = Object.fromEntries(new FormData(document.getElementById('editForm')));
-        console.log(formData)
-        //Cleanup data types
-        formData.score = parseFloat(formData.score);
-        //TODO: show loading bar and disable input while files are updated
-        addEntry(formData);
-      }}>
-        <label htmlFor={'title'}>{editType.label.substring(0, editType.label.length-1)} Title</label>
-        <input id={'title'} name={'title'} type={'text'} required/>
-        <label htmlFor={'release'}>Release Date</label>
-        <input id={'release'} name={'release'} type={'date'} defaultValue={getNowDate()} required/>
-        <label htmlFor={'score'}>Score</label>
-        <input id={'score'} name={'score'} type={'number'} min={1} max={10} step={1} required/>
-      </form>
-      <div className={'buttons'}>
+      <div className={'title'}>
+        <h2>{data ? 'Edit <name>' : "Add new media"}</h2>
+      </div>
+      <div className={'content'}>
+        <div className={'inputWrapper required'}>
+          <label>Media type</label>
+          {!data && <Select unstyled classNamePrefix={'react-select'} options={[
+            {value: "movie", label: "Movies"},
+            {value: "tv", label: "TV Shows"},
+            {value: "game", label: "Video Games"},
+            {value: "book", label: "Books"},
+          ]} value={editType} onChange={setEditType}/>}
+        </div>
+        <form id={'editForm'} onSubmit={(e) => {
+          //dont reload
+          e.preventDefault();
+          //TODO: save logic
+          const formData = Object.fromEntries(new FormData(document.getElementById('editForm')));
+          console.log(formData)
+          //Cleanup data types
+          formData.score = parseFloat(formData.score);
+          //TODO: show loading bar and disable input while files are updated
+          addEntry(formData);
+        }}>
+          <div className={'inputWrapper required'}>
+            <label htmlFor={'title'}>{editType.label.substring(0, editType.label.length - 1)} Title</label>
+            <input id={'title'} name={'title'} type={'text'} required/>
+          </div>
+          <div className={'inputWrapper required'}>
+            <label htmlFor={'release'}>Release Date</label>
+            <input id={'release'} name={'release'} type={'date'} defaultValue={getNowDate()} required/>
+          </div>
+          <div className={'inputWrapper required'}>
+            <label htmlFor={'score'}>Score</label>
+            <input id={'score'} name={'score'} type={'number'} min={1} max={10} step={1} required/>
+          </div>
+          <div className={'inputWrapper'}>
+            <label htmlFor={''}></label>
+            <input id={''} name={''} type={''}/>
+          </div>
+        </form>
+      </div>
+      <div className={'footer'}>
         <button onClick={closeButton}>Cancel</button>
         <button type={"submit"} form={'editForm'}>Save</button>
       </div>

@@ -1,0 +1,243 @@
+/*
+ * Colours from NextUI.
+ * https://www.figma.com/design/MBFftXCnGZXmbYlt9SiegK/NextUI-Figma-Kit-(Community)-(Community)?node-id=0-1&m=dev
+ */
+/*
+ * Primitives adapted form NextUI.
+ * https://www.figma.com/design/MBFftXCnGZXmbYlt9SiegK/NextUI-Figma-Kit-(Community)-(Community)?node-id=5-1194
+ */
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+form .inputWrapper:not(:first-of-type) {
+  margin-top: 1.5rem;
+}
+
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.75rem;
+}
+.inputWrapper label, .inputWrapper .label {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: var(--default-600);
+}
+.inputWrapper.required label:after, .inputWrapper.required .label:after {
+  content: "*";
+  color: var(--danger);
+}
+
+input, select {
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+  border-radius: 0.75rem;
+  background-color: var(--default-100);
+  width: 100%;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  line-height: 20px;
+  color: var(--foreground);
+  appearance: none;
+  border: none;
+}
+input:focus-visible, select:focus-visible {
+  background-color: var(--default-200);
+}
+
+.react-select__control {
+  background-color: var(--default-100);
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.25rem 0.5rem;
+}
+.react-select__control * {
+  color: var(--foreground);
+  cursor: pointer;
+}
+
+.react-select__menu {
+  margin-top: 0.25rem;
+  background-color: var(--content1);
+  border-radius: 0.5rem;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+  padding: 0.5rem;
+  min-width: 200px;
+  width: fit-content;
+  border: 1px solid var(--default-100);
+}
+.react-select__menu * {
+  color: var(--foreground);
+}
+.react-select__menu .react-select__option {
+  padding: 0.375rem 0.5rem;
+  background-color: var(--content1);
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+.react-select__menu .react-select__option:hover {
+  background-color: var(--default);
+}
+.react-select__menu .react-select__option--is-selected {
+  background-color: var(--content1);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.react-select__menu .react-select__option--is-selected::after {
+  content: "";
+  background-image: url("../images/essential/tick-circle.svg");
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  background-size: 1rem;
+  filter: var(--filter-foreground);
+}
+
+button:not(.tab), .button {
+  border-radius: 0.5rem;
+  padding: 0px 1rem;
+  height: 2.5rem;
+  appearance: none;
+  border: none;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: var(--foreground);
+  background-color: var(--default);
+  cursor: pointer;
+}
+button:not(.tab):hover, .button:hover {
+  text-decoration: underline;
+}
+button:not(.tab).sm, .button.sm {
+  height: 2rem;
+  padding: 0px 0.75rem;
+}
+button:not(.tab).lg, .button.lg {
+  height: 48px;
+  padding: 0px 1.5rem;
+}
+button:not(.tab).iconOnly, .button.iconOnly {
+  padding: 0px;
+  width: 2.5rem;
+}
+button:not(.tab).iconOnly.sm, .button.iconOnly.sm {
+  width: 2rem;
+}
+button:not(.tab).iconOnly.lg, .button.iconOnly.lg {
+  width: 48px;
+}
+button:not(.tab).primary, .button.primary {
+  background-color: var(--primary);
+}
+button:not(.tab).secondary, .button.secondary {
+  background-color: var(--secondary);
+}
+button:not(.tab).success, .button.success {
+  background-color: var(--success);
+}
+button:not(.tab).warning, .button.warning {
+  background-color: var(--warning);
+}
+button:not(.tab).danger, .button.danger {
+  background-color: var(--danger);
+}
+
+.buttonGroup button:not(:first-of-type), .buttonGroup .button:not(:first-of-type) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.buttonGroup button:not(:last-of-type), .buttonGroup .button:not(:last-of-type) {
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.tab {
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  text-align: center;
+  color: var(--default-500);
+  border: none;
+  background-color: transparent;
+  text-decoration: none;
+  cursor: pointer;
+}
+.tab:hover {
+  opacity: 0.5;
+  color: var(--default-500);
+}
+.tab.active {
+  background-color: var(--background);
+  color: var(--foreground);
+  pointer-events: none;
+}
+.tab.sm {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+.tab.lg {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.tabGroup {
+  margin-left: auto;
+  width: fit-content;
+  margin-right: auto;
+  border-radius: 0.75rem;
+  padding: 0.25rem;
+  background-color: var(--default-100);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  overflow-x: auto;
+  gap: 0.5rem;
+}
+.tabGroup.sm .tab {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+.tabGroup.lg .tab {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.react-micro-modal--portal.open::before {
+  content: "";
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  pointer-events: all;
+}
+.react-micro-modal--portal [role=dialog] {
+  background-color: var(--content1) !important;
+  min-width: 50% !important;
+  max-height: 70%;
+  overflow-x: auto !important;
+  padding: 1.5rem !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+.react-micro-modal--portal [role=dialog] .title {
+  margin-bottom: 1.25rem;
+}
+.react-micro-modal--portal [role=dialog] .content {
+  overflow-x: auto;
+}
+.react-micro-modal--portal [role=dialog] .footer {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/*# sourceMappingURL=NextUI.css.map */

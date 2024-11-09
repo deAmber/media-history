@@ -1,0 +1,38 @@
+/*
+ * Primitives adapted form NextUI.
+ * https://www.figma.com/design/MBFftXCnGZXmbYlt9SiegK/NextUI-Figma-Kit-(Community)-(Community)?node-id=5-1194
+ */
+:root {
+  font-family: Inter, sans-serif;
+  line-height: 150%;
+  font-weight: 400;
+  color-scheme: light dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.header {
+  width: 100%;
+  padding: 2rem 48px;
+  background-color: #002E62;
+}
+.header h1 {
+  color: #F4F4F5;
+}
+
+#main {
+  padding: 1.5rem 48px;
+  height: 100%;
+}
+
+/*# sourceMappingURL=style.css.map */

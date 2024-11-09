@@ -1,0 +1,38 @@
+@import "variables";
+
+//Core basics
+:root {
+  font-family: Inter, sans-serif;
+  line-height: 150%;
+  font-weight: 400;
+
+  color-scheme: light dark;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+//App header
+.header {
+  width: 100%;
+  padding: $unit-8 $unit-12;
+  background-color: #002E62;
+  h1 {
+    color: #F4F4F5;
+  }
+}
+
+//Body
+#main {
+  padding: $unit-6 $unit-12;
+  height: 100%;
+}
