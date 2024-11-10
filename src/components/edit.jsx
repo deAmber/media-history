@@ -1,13 +1,15 @@
 import mainStore from "../stores/mainStore.js";
 import { updateFile } from "../utilities.js";
 import driveData from "../stores/driveData.js";
-import {useState} from "react";
+import { useState } from "react";
 import Select from "react-select";
+import Loader from "./loader.jsx";
 
 const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => {
   const { type, year } = mainStore();
   const { meta, setMeta , movies, setMovies } = driveData();
   const [ editType, setEditType ] = useState(forceEditType || type)
+  const [ saving, setSaving ] = useState(false);
 
   const getNowDate = () => {
     const now = new Date();
@@ -35,13 +37,17 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
         temp[year].push(data);
       }
       setMovies(temp);
-      updateFile(meta.fileIds.movies, movies).then(closeButton);
+      updateFile(meta.fileIds.movies, movies).then(() => {
+        setSaving(false);
+        closeButton();
+      });
     }
     //TODO: other types
   }
 
   return (
     <>
+      {saving && <Loader message={`Saving new ${editType.label.substring(0, editType.label.length-1)}, please wait...`}/>}
       <div className={'title'}>
         <h2>{data ? 'Edit <name>' : "Add new media"}</h2>
       </div>
@@ -58,6 +64,7 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
         <form id={'editForm'} onSubmit={(e) => {
           //dont reload
           e.preventDefault();
+          setSaving(true);
           //TODO: save logic
           const formData = Object.fromEntries(new FormData(document.getElementById('editForm')));
           console.log(formData)
@@ -85,8 +92,8 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
         </form>
       </div>
       <div className={'footer'}>
-        <button onClick={closeButton}>Cancel</button>
-        <button type={"submit"} form={'editForm'}>Save</button>
+        <button onClick={closeButton} className={'danger'}>Cancel</button>
+        <button type={"submit"} form={'editForm'} className={'primary'}>Save</button>
       </div>
     </>
   )

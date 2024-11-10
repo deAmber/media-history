@@ -1,6 +1,8 @@
 import { create } from "zustand";
 
 const mainStore = create((set) => ({
+  loaded: false,
+  setLoaded: (option) => {set({loaded: option})},
   type: {value: 'movie', label: 'Movies'},
   setType: (option) => (set({type: option})),
   year: null,

@@ -9,7 +9,7 @@ import { gapi } from "gapi-script";
 
 const Nav = () => {
   const location = useLocation();
-  const { type, setType, year, setYear, setUser } = mainStore();
+  const { type, setType, year, setYear, setUser, setLoaded } = mainStore();
   const { meta } = driveData();
   const [ addModal, setAddModal ] = useState(false);
 
@@ -29,6 +29,7 @@ const Nav = () => {
           localStorage.removeItem('isLoggedIn');
           localStorage.removeItem('token');
           setUser(false);
+          setLoaded(false);
         });
       }}>Log out</button>
       <Select options={[

@@ -9,6 +9,34 @@ body {
   color: var(--foreground);
 }
 
+//Spinner
+.spinner {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: $unit-1 solid var(--default-300);
+  border-right-color: var(--primary);
+  animation: spinner-spin .8s ease infinite;
+  @keyframes spinner-spin {
+    0% {
+      transform:rotate(0)
+    }
+    to {
+      transform:rotate(360deg)
+    }
+  }
+}
+.loaderContainer {
+  width: 100%;
+  height: 100%;
+  padding: $unit-6;
+  display: flex;
+  flex-direction: column;
+  gap: $unit-3;
+  align-items: center;
+  justify-content: center;
+}
+
 //Inputs
 form {
   .inputWrapper:not(:first-of-type) {
@@ -21,8 +49,8 @@ form {
   width: 100%;
   gap: $unit-3;
   label, .label {
-    font-size: 0.75rem;
-    line-height: 1rem;
+    font-size: $font-size-small;
+    line-height: $line-height-small;
     color: var(--default-600);
   }
   &.required {
@@ -34,19 +62,30 @@ form {
     }
   }
 }
-input, select {
+input {
   box-shadow: $shadow-sm;
   border-radius: $rounded-medium;
   background-color: var(--default-100);
   width: 100%;
-  padding: $unit-1 $unit-2;
-  font-size: 0.875rem;
-  line-height: 20px;
+  padding: $unit-1 $unit-3;
+  min-height: 2.5rem;
+  font-size: $font-size-small;
+  line-height: $line-height-small;
   color: var(--foreground);
   appearance: none;
   border: none;
-  &:focus-visible {
+  &:focus-visible, &:hover {
     background-color: var(--default-200);
+  }
+  &[type="date"]::-webkit-calendar-picker-indicator {
+    background-image: url("../images/essential/calander.svg");
+    filter: var(--filter-default-400);
+    background-size: contain;
+    width: 1.5rem;
+    height: 1.5rem;
+    &:hover {
+      opacity: 0.5;
+    }
   }
 }
 //React Select
@@ -107,8 +146,8 @@ button:not(.tab), .button {
   height: $unit-10;
   appearance: none;
   border: none;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  font-size: $font-size-small;
+  line-height: $line-height-small;
   color: var(--foreground);
   background-color: var(--default);
   cursor: pointer;
@@ -168,8 +207,8 @@ button:not(.tab), .button {
 .tab {
   border-radius: $rounded-small;
   padding: $unit-1 $unit-3;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  font-size: $font-size-small;
+  line-height: $line-height-small;
   text-align: center;
   color: var(--default-500);
   border: none;
@@ -186,12 +225,12 @@ button:not(.tab), .button {
     pointer-events: none;
   }
   &.sm {
-    font-size: 0.75rem;
-    line-height: 1rem;
+    font-size: $font-size-tiny;
+    line-height: $line-height-tiny;
   }
   &.lg {
-    font-size: 1rem;
-    line-height: 1.5rem;
+    font-size: $font-size-medium;
+    line-height: $line-height-medium;
   }
 }
 .tabGroup {
@@ -232,21 +271,36 @@ button:not(.tab), .button {
     min-width: 50% !important;
     max-height: 70%;
     overflow-x: auto !important;
-    padding: $unit-6 !important;
+    padding: $unit-4 $unit-6 !important;
     border-radius: $rounded-medium !important;
     box-shadow: $shadow-lg;
+    position: relative;
+    .loaderContainer {
+      position: absolute;
+      background-color: rgba(0, 0, 0, 0.6);
+      top: 0;
+      left: 0;
+      z-index: 700;
+    }
     .title {
-      margin-bottom: $unit-5;
+      margin-bottom: $unit-4;
+      h2 {
+        font-weight: 600;
+        font-size: $font-size-large;
+        line-height: $line-height-large;
+      }
     }
     .content {
       overflow-x: auto;
+      padding-top: $unit-2;
+      padding-bottom: $unit-2;
     }
     .footer {
-      margin-top: $unit-5;
+      margin-top: $unit-4;
       display: flex;
       flex-direction: row;
-      justify-content: space-between;
-      gap: $unit-4;
+      justify-content: flex-end;
+      gap: $unit-2;
     }
   }
 }

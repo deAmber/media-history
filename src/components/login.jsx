@@ -6,7 +6,7 @@ import driveData from "../stores/driveData.js";
 const ClientId = "803994679308-qk0cpk827asnvoshdtegmuiq5igl8rbc.apps.googleusercontent.com";
 
 const Login = () => {
-  const { setUser, setYear } = mainStore();
+  const { setUser, setYear, setLoaded } = mainStore();
   const { setMeta, meta, setMovies } = driveData();
   const [ loginError, setLoginError ] = useState(false);
   let fileIDs = {};
@@ -149,6 +149,8 @@ const Login = () => {
       }
     }
 
+    let loadedFiles = 0;
+
     //Gets contents of files or creates them if they do not exist
     files.forEach(v => {
       console.log('Loading file', v.name)
@@ -164,6 +166,10 @@ const Login = () => {
             }
           } else {
             v.store(content);
+          }
+          loadedFiles++;
+          if (loadedFiles === files.length) {
+            setLoaded(true);
           }
         } else {
           setUser(false);
@@ -211,7 +217,7 @@ const Login = () => {
 
   return <>
     <h2>Please log in to continue</h2>
-    <button onClick={handleGoogleLogin}>Login with Google</button>
+    <button className={'primary'} onClick={handleGoogleLogin}>Login with Google</button>
   </>
 }
 
