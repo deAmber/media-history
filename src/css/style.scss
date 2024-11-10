@@ -20,7 +20,6 @@
   background-repeat: no-repeat;
   background-position: center;
 }
-
 //App header
 .header {
   width: 100%;
@@ -35,4 +34,24 @@
 #main {
   padding: $unit-6 $unit-12;
   height: 100%;
+}
+
+//Edit entry form
+#editModal-content {
+  > .inputWrapper {
+    border-bottom: 1px solid var(--divider);
+    padding-bottom: $unit-4;
+    margin-bottom: -$unit-2;
+  }
+  form {
+    .inputWrapper {
+      margin-top: $unit-6;
+    }
+    .inputSplit {
+      margin-top: $unit-6;
+      .inputWrapper {
+        margin-top: 0;
+      }
+    }
+  }
 }

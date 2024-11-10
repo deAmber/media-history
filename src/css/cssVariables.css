@@ -23,6 +23,7 @@ body, body.lightMode {
     --success: #17C964;
     --warning: #F5A524;
     --danger: #F31260;
+    --filter-danger: brightness(0) saturate(100%) invert(26%) sepia(82%) saturate(6199%) hue-rotate(329deg) brightness(95%) contrast(101%);
     /*Default*/
     --default-50: #FAFAFA;
     --default-100: #F4F4F5;
@@ -115,6 +116,7 @@ body, body.lightMode {
         --success: #17C964;
         --warning: #F5A524;
         --danger: #F31260;
+        --filter-danger: brightness(0) saturate(100%) invert(34%) sepia(100%) saturate(7494%) hue-rotate(332deg) brightness(98%) contrast(94%);
         /*Default*/
         --default-50: #18181B;
         --default-100: #27272A;
@@ -205,6 +207,7 @@ body.darkMode {
     --success: #17C964;
     --warning: #F5A524;
     --danger: #F31260;
+    --filter-danger: brightness(0) saturate(100%) invert(34%) sepia(100%) saturate(7494%) hue-rotate(332deg) brightness(98%) contrast(94%);
     /*Default*/
     --default-50: #18181B;
     --default-100: #27272A;

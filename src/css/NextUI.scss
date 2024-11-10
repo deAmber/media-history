@@ -9,6 +9,31 @@ body {
   color: var(--foreground);
 }
 
+//Chips
+.chip {
+  height: 24px;
+  padding: 0 $unit-1;
+  border-radius: $rounded-small;
+  background-color: var(--default);
+  color: var(--foreground);
+  font-size: $font-size-tiny;
+  line-height: $line-height-tiny;
+  display: flex;
+  align-items: center;
+  gap: $unit-1;
+  * {
+    color: var(--foreground);
+    font-size: $font-size-tiny;
+    line-height: $line-height-tiny;
+  }
+  &.primary {
+    background-color: var(--primary);
+  }
+  &.secondary {
+    background-color: var(--secondary);
+  }
+}
+
 //Spinner
 .spinner {
   width: 2rem;
@@ -38,11 +63,6 @@ body {
 }
 
 //Inputs
-form {
-  .inputWrapper:not(:first-of-type) {
-    margin-top: $unit-6;
-  }
-}
 .inputWrapper {
   display: flex;
   flex-direction: column;
@@ -61,8 +81,42 @@ form {
       }
     }
   }
+  &.prefixed {
+    position: relative;
+    input {
+      padding-left: $unit-7;
+    }
+    &::before {
+      content: '$';
+      position: absolute;
+      bottom: $unit-2;
+      left: $unit-3;
+    }
+  }
+  &.suffixed {
+    position: relative;
+    input {
+      padding-right: $unit-9;
+    }
+    &::after {
+      content: '/10';
+      position: absolute;
+      bottom: $unit-2;
+      right: $unit-3;
+    }
+  }
 }
-input {
+form.submitted input:invalid {
+  background-color: var(--danger-200);
+}
+.inputSplit {
+  display: flex;
+  flex-direction: row;
+  gap: $unit-4;
+  appearance: none;
+  border: none;
+}
+input, textarea, select {
   box-shadow: $shadow-sm;
   border-radius: $rounded-medium;
   background-color: var(--default-100);
@@ -87,16 +141,43 @@ input {
       opacity: 0.5;
     }
   }
+  &::placeholder {
+    font-family: inter, 'sans-serif';
+    color: var(--content4);
+  }
+}
+select {
+  appearance: auto;
 }
 //React Select
 .react-select__control {
   background-color: var(--default-100);
   border: none;
   border-radius: $rounded-medium;
-  padding: $unit-1 $unit-2;
+  padding: $unit-0 $unit-2;
   * {
     color: var(--foreground);
     cursor: pointer;
+  }
+  .react-select__placeholder {
+    color: var(--content4);
+    font-size: $font-size-small;
+    line-height: $line-height-small;
+  }
+  .chip {
+    .react-select__multi-value__remove {
+      background-image: url("../images/essential/close-circle.svg");
+      width: 1rem;
+      height: 1rem;
+      background-size: contain;
+      filter: var(--filter-foreground);
+      &:hover {
+        filter: var(--filter-danger)
+      }
+      svg {
+        display: none;
+      }
+    }
   }
 }
 .react-select__menu {
@@ -269,8 +350,9 @@ button:not(.tab), .button {
   [role="dialog"] {
     background-color: var(--content1) !important;
     min-width: 50% !important;
-    max-height: 70%;
-    overflow-x: auto !important;
+    max-height: 70% !important;
+    height: 70%;
+    overflow: hidden !important;
     padding: $unit-4 $unit-6 !important;
     border-radius: $rounded-medium !important;
     box-shadow: $shadow-lg;
@@ -291,16 +373,22 @@ button:not(.tab), .button {
       }
     }
     .content {
-      overflow-x: auto;
+      overflow-y: auto;
       padding-top: $unit-2;
       padding-bottom: $unit-2;
+      max-height: calc(100% - 6.25rem);
     }
     .footer {
-      margin-top: $unit-4;
+      padding-top: $unit-4;
       display: flex;
       flex-direction: row;
       justify-content: flex-end;
       gap: $unit-2;
+      background-color: var(--content1);
+      position: absolute;
+      left: $unit-6;
+      right: $unit-6;
+      bottom: $unit-4;
     }
   }
 }

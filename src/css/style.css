@@ -35,4 +35,19 @@
   height: 100%;
 }
 
+#editModal-content > .inputWrapper {
+  border-bottom: 1px solid var(--divider);
+  padding-bottom: 1rem;
+  margin-bottom: -0.5rem;
+}
+#editModal-content form .inputWrapper {
+  margin-top: 1.5rem;
+}
+#editModal-content form .inputSplit {
+  margin-top: 1.5rem;
+}
+#editModal-content form .inputSplit .inputWrapper {
+  margin-top: 0;
+}
+
 /*# sourceMappingURL=style.css.map */

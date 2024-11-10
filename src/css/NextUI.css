@@ -11,6 +11,30 @@ body {
   color: var(--foreground);
 }
 
+.chip {
+  height: 24px;
+  padding: 0 0.25rem;
+  border-radius: 0.5rem;
+  background-color: var(--default);
+  color: var(--foreground);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.chip * {
+  color: var(--foreground);
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+.chip.primary {
+  background-color: var(--primary);
+}
+.chip.secondary {
+  background-color: var(--secondary);
+}
+
 .spinner {
   width: 2rem;
   height: 2rem;
@@ -39,10 +63,6 @@ body {
   justify-content: center;
 }
 
-form .inputWrapper:not(:first-of-type) {
-  margin-top: 1.5rem;
-}
-
 .inputWrapper {
   display: flex;
   flex-direction: column;
@@ -58,8 +78,44 @@ form .inputWrapper:not(:first-of-type) {
   content: "*";
   color: var(--danger);
 }
+.inputWrapper.prefixed {
+  position: relative;
+}
+.inputWrapper.prefixed input {
+  padding-left: 1.75rem;
+}
+.inputWrapper.prefixed::before {
+  content: "$";
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.75rem;
+}
+.inputWrapper.suffixed {
+  position: relative;
+}
+.inputWrapper.suffixed input {
+  padding-right: 2.25rem;
+}
+.inputWrapper.suffixed::after {
+  content: "/10";
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.75rem;
+}
 
-input {
+form.submitted input:invalid {
+  background-color: var(--danger-200);
+}
+
+.inputSplit {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  appearance: none;
+  border: none;
+}
+
+input, textarea, select {
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
   border-radius: 0.75rem;
   background-color: var(--default-100);
@@ -72,29 +128,55 @@ input {
   appearance: none;
   border: none;
 }
-input:focus-visible, input:hover {
+input:focus-visible, input:hover, textarea:focus-visible, textarea:hover, select:focus-visible, select:hover {
   background-color: var(--default-200);
 }
-input[type=date]::-webkit-calendar-picker-indicator {
+input[type=date]::-webkit-calendar-picker-indicator, textarea[type=date]::-webkit-calendar-picker-indicator, select[type=date]::-webkit-calendar-picker-indicator {
   background-image: url("../images/essential/calander.svg");
   filter: var(--filter-default-400);
   background-size: contain;
   width: 1.5rem;
   height: 1.5rem;
 }
-input[type=date]::-webkit-calendar-picker-indicator:hover {
+input[type=date]::-webkit-calendar-picker-indicator:hover, textarea[type=date]::-webkit-calendar-picker-indicator:hover, select[type=date]::-webkit-calendar-picker-indicator:hover {
   opacity: 0.5;
+}
+input::placeholder, textarea::placeholder, select::placeholder {
+  font-family: inter, "sans-serif";
+  color: var(--content4);
+}
+
+select {
+  appearance: auto;
 }
 
 .react-select__control {
   background-color: var(--default-100);
   border: none;
   border-radius: 0.75rem;
-  padding: 0.25rem 0.5rem;
+  padding: 0px 0.5rem;
 }
 .react-select__control * {
   color: var(--foreground);
   cursor: pointer;
+}
+.react-select__control .react-select__placeholder {
+  color: var(--content4);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+.react-select__control .chip .react-select__multi-value__remove {
+  background-image: url("../images/essential/close-circle.svg");
+  width: 1rem;
+  height: 1rem;
+  background-size: contain;
+  filter: var(--filter-foreground);
+}
+.react-select__control .chip .react-select__multi-value__remove:hover {
+  filter: var(--filter-danger);
+}
+.react-select__control .chip .react-select__multi-value__remove svg {
+  display: none;
 }
 
 .react-select__menu {
@@ -259,8 +341,9 @@ button:not(.tab).danger, .button.danger {
 .react-micro-modal--portal [role=dialog] {
   background-color: var(--content1) !important;
   min-width: 50% !important;
-  max-height: 70%;
-  overflow-x: auto !important;
+  max-height: 70% !important;
+  height: 70%;
+  overflow: hidden !important;
   padding: 1rem 1.5rem !important;
   border-radius: 0.75rem !important;
   box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -4px rgba(0, 0, 0, 0.1);
@@ -282,16 +365,22 @@ button:not(.tab).danger, .button.danger {
   line-height: 1.75rem;
 }
 .react-micro-modal--portal [role=dialog] .content {
-  overflow-x: auto;
+  overflow-y: auto;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
+  max-height: calc(100% - 6.25rem);
 }
 .react-micro-modal--portal [role=dialog] .footer {
-  margin-top: 1rem;
+  padding-top: 1rem;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
   gap: 0.5rem;
+  background-color: var(--content1);
+  position: absolute;
+  left: 1.5rem;
+  right: 1.5rem;
+  bottom: 1rem;
 }
 
 /*# sourceMappingURL=NextUI.css.map */

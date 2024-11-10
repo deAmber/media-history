@@ -15,7 +15,7 @@ const Login = () => {
   const files = [
     {
       name: 'metaData',
-      default: {'people': [], 'cinemas': [], 'years': [], 'movies': {}, 'tv': {}},
+      default: {'people': [], 'cinemas': [], 'years': [], 'consoles': [], 'movies': {}, 'tv': {}},
       store: setMeta
     },
     {
