@@ -7,7 +7,7 @@ import Loader from "./loader.jsx";
 import CreatableSelect from "react-select/creatable";
 
 const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => {
-  const { type, year } = mainStore();
+  const { type, setUpdateFlag } = mainStore();
   const { meta, setMeta , movies, setMovies, shows, setShows, games, setGames, books, setBooks } = driveData();
   const [ editType, setEditType ] = useState(forceEditType || type)
   const [ saving, setSaving ] = useState(false);
@@ -23,6 +23,14 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
     return now.toJSON().slice(0,10)+"";
   }
 
+  /**
+   * Handles inserting the new entry into the array.
+   * @param {Object} dataReference - Zustand store
+   * @param {Number} year - Year the entry is for.
+   * @param {String} date - Key for the date field to sort by.
+   * @param {Object} data - Processed form data for new entry.
+   * @returns {*} - Updated copy of the Zustand store.
+   */
   const handleDataInsert = (dataReference, year, date, data) => {
     //Add entry to movie file
     let temp = dataReference;
@@ -43,7 +51,11 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
     }
     return temp;
   }
-  //Updates
+
+  /**
+   * Process and formats any needed data, and then updates the Zustand store and data file.
+   * @param {Object} data - Form Data.
+   */
   const addEntry = (data) => {
     //TODO: ranking + updating all other entries with a higher rank
     const year = parseInt(data[editType.value === 'movie' ? 'dateWatched' : 'started'].split('-')[0]);
@@ -95,6 +107,7 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
       //Add entry to movie file
       let temp = handleDataInsert(movies, year, 'dateWatched', data);
       setMovies(temp);
+      setUpdateFlag();
       updateFile(meta.fileIds.movies, movies).then(() => {
         setSaving(false);
         closeButton();
@@ -105,6 +118,7 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
       //Add entry to TV file
       let temp = handleDataInsert(shows, year, 'started', data);
       setShows(temp);
+      setUpdateFlag();
       updateFile(meta.fileIds.tv, shows).then(() => {
         setSaving(false);
         closeButton();
@@ -123,6 +137,7 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
       //Add entry to Game file
       let temp = handleDataInsert(games, year, 'started', data);
       setGames(temp);
+      setUpdateFlag();
       updateFile(meta.fileIds.game, games).then(() => {
         setSaving(false);
         closeButton();
@@ -149,6 +164,7 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
       //Add entry to Game file
       let temp = handleDataInsert(books, year, 'started', data);
       setBooks(temp);
+      setUpdateFlag();
       updateFile(meta.fileIds.book, books).then(() => {
         setSaving(false);
         closeButton();

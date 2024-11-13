@@ -21,6 +21,11 @@
   background-position: center;
 }
 
+body {
+  height: 100vh;
+  height: 100dvh;
+}
+
 .header {
   width: 100%;
   padding: 2rem 48px;
@@ -32,7 +37,11 @@
 
 #main {
   padding: 1.5rem 48px;
-  height: 100%;
+  height: calc(100% - 88px);
+}
+
+.pageContent {
+  min-height: calc(100% - 92px);
 }
 
 #editModal-content > .inputWrapper {

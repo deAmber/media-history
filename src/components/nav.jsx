@@ -38,10 +38,10 @@ const Nav = () => {
         {value: "game", label: "Video Games"},
         {value: "book", label: "Books"},
       ]} value={type} onChange={setType} menuPortalTarget={document.body}
-              unstyled classNamePrefix={'react-select'}/>
+              unstyled classNamePrefix={'react-select'} className={'react-select-wrapper'}/>
       {meta['years'] && <Select options={meta['years'].map(v => {return {label: v, value: v}})}
               value={year} isDisabled={meta['years'].length === 0} menuPortalTarget={document.body}
-              onChange={setYear} unstyled classNamePrefix={'react-select'}/>}
+              onChange={setYear} unstyled classNamePrefix={'react-select'} className={'react-select-wrapper'}/>}
     </div>
   )
 }

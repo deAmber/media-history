@@ -291,6 +291,7 @@ button:not(.tab).danger, .button.danger {
   background-color: transparent;
   text-decoration: none;
   cursor: pointer;
+  white-space: nowrap;
 }
 .tab:hover {
   opacity: 0.5;
@@ -313,7 +314,9 @@ button:not(.tab).danger, .button.danger {
 .tabGroup {
   margin-left: auto;
   width: fit-content;
+  max-width: 100%;
   margin-right: auto;
+  margin-bottom: 1.5rem;
   border-radius: 0.75rem;
   padding: 0.25rem;
   background-color: var(--default-100);
@@ -330,6 +333,9 @@ button:not(.tab).danger, .button.danger {
 .tabGroup.lg .tab {
   font-size: 1rem;
   line-height: 1.5rem;
+}
+.tabGroup .react-select-wrapper {
+  flex-shrink: 0;
 }
 
 .react-micro-modal--portal.open::before {
@@ -384,6 +390,77 @@ button:not(.tab).danger, .button.danger {
   left: 1.5rem;
   right: 1.5rem;
   bottom: 1rem;
+}
+
+.p-datatable {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+  background-color: var(--content1);
+  width: 100%;
+}
+.p-datatable thead th {
+  padding: 0.75rem 0.5rem;
+  background-color: var(--default-100);
+  color: var(--default-500);
+}
+.p-datatable thead th:first-of-type {
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+}
+.p-datatable thead th:last-of-type {
+  border-top-right-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+.p-datatable thead th .p-column-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1rem;
+  text-transform: uppercase;
+}
+.p-datatable thead th.p-sortable-column:hover {
+  color: var(--default-400);
+}
+.p-datatable thead th.p-sortable-column:hover span[data-pc-section=sort] {
+  filter: var(--filter-default-400);
+}
+.p-datatable thead th.p-sortable-column[aria-sort=none] span[data-pc-section=sort] {
+  visibility: hidden;
+}
+.p-datatable thead th.p-sortable-column[aria-sort=none]:hover span[data-pc-section=sort] {
+  visibility: visible;
+}
+.p-datatable thead th.p-sortable-column span[data-pc-section=sort] {
+  margin-left: 0.75rem;
+  width: 1rem;
+  height: 1rem;
+  background-image: url("../images/arrows/arrow-up.svg");
+  filter: var(--filter-default-500);
+}
+.p-datatable thead th.p-sortable-column span[data-pc-section=sort] svg {
+  display: none;
+}
+.p-datatable thead th.p-sortable-column[aria-sort=descending] span[data-pc-section=sort] {
+  background-image: url("../images/arrows/arrow-down.svg");
+}
+.p-datatable tbody::before {
+  content: "";
+  display: block;
+  height: 0.5rem;
+}
+.p-datatable tbody td {
+  padding: 0.75rem 0.5rem;
+}
+.p-datatable tbody tr:nth-child(2) td {
+  background-color: var(--default-100);
+}
+.p-datatable tbody tr:nth-child(2) td:first-of-type {
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+}
+.p-datatable tbody tr:nth-child(2) td:last-of-type {
+  border-top-right-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
 }
 
 /*# sourceMappingURL=NextUI.css.map */

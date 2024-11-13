@@ -33,6 +33,7 @@ body, body.lightMode {
     --default-400: #A1A1AA;
     --filter-default-400: brightness(0) saturate(100%) invert(66%) sepia(13%) saturate(145%) hue-rotate(202deg) brightness(96%) contrast(90%);
     --default-500: #71717A;
+    --filter-default-500: brightness(0) saturate(100%) invert(48%) sepia(8%) saturate(341%) hue-rotate(201deg) brightness(90%) contrast(87%);
     --default-600: #52525B;
     --default-700: #3F3F46;
     --default-800: #27272A;
@@ -126,6 +127,7 @@ body, body.lightMode {
         --default-400: #71717A;
         --filter-default-400: brightness(0) saturate(100%) invert(45%) sepia(8%) saturate(383%) hue-rotate(202deg) brightness(94%) contrast(82%);
         --default-500: #A1A1AA;
+        --filter-default-500: brightness(0) saturate(100%) invert(72%) sepia(7%) saturate(253%) hue-rotate(201deg) brightness(89%) contrast(88%);
         --default-600: #D4D4D8;
         --default-700: #E4E4E7;
         --default-800: #F4F4F5;
@@ -217,6 +219,7 @@ body.darkMode {
     --default-400: #71717A;
     --filter-default-400: brightness(0) saturate(100%) invert(45%) sepia(8%) saturate(383%) hue-rotate(202deg) brightness(94%) contrast(82%);
     --default-500: #A1A1AA;
+    --filter-default-500: brightness(0) saturate(100%) invert(72%) sepia(7%) saturate(253%) hue-rotate(201deg) brightness(89%) contrast(88%);
     --default-600: #D4D4D8;
     --default-700: #E4E4E7;
     --default-800: #F4F4F5;

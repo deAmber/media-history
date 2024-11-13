@@ -20,10 +20,10 @@ function App() {
           {loaded ? <>
           <Nav/>
           <Routes>
-            <Route path={'/'} element={<Homepage/>}/>
-            <Route path={'/stats'} element={<Stats/>}/>
-            <Route path={'/charts'} element={<Charts/>}/>
-            <Route path={'/table'} element={<ViewTable/>}/>
+            <Route path={'/'} element={<div className={'pageContent'}><Homepage/></div>}/>
+              <Route path={'/stats'} element={<div className={'pageContent'}><Stats/></div>}/>
+              <Route path={'/charts'} element={<div className={'pageContent'}><Charts/></div>}/>
+              <Route path={'/table'} element={<div className={'pageContent'}><ViewTable/></div>}/>
           </Routes>
           </> : <Loader/>}
         </>) : <Login/>}

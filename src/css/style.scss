@@ -20,6 +20,13 @@
   background-repeat: no-repeat;
   background-position: center;
 }
+
+//document
+body {
+  height: 100vh;
+  height: 100dvh;
+}
+
 //App header
 .header {
   width: 100%;
@@ -33,7 +40,11 @@
 //Body
 #main {
   padding: $unit-6 $unit-12;
-  height: 100%;
+  height: calc(100% - 88px);
+}
+
+.pageContent {
+  min-height: calc( 100% - 92px );
 }
 
 //Edit entry form

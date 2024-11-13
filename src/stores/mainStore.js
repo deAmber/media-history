@@ -9,6 +9,8 @@ const mainStore = create((set) => ({
   setYear: (option) => (set({year: option})),
   user: false,
   setUser: (option) => (set({user: option})),
+  updateFlag: 0,
+  setUpdateFlag: () => set((state) => ({updateFlag: state.updateFlag + 1}))
 }));
 
 export default mainStore;

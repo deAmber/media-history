@@ -297,6 +297,7 @@ button:not(.tab), .button {
   background-color: transparent;
   text-decoration: none;
   cursor: pointer;
+  white-space: nowrap;
   &:hover {
     opacity: 0.5;
     color: var(--default-500);
@@ -318,7 +319,9 @@ button:not(.tab), .button {
 .tabGroup {
   margin-left: auto;
   width: fit-content;
+  max-width: 100%;
   margin-right: auto;
+  margin-bottom: $unit-6;
   border-radius: $rounded-medium;
   padding: $unit-1;
   background-color: var(--default-100);
@@ -334,6 +337,9 @@ button:not(.tab), .button {
   &.lg .tab {
     font-size: 1rem;
     line-height: 1.5rem;
+  }
+  .react-select-wrapper {
+    flex-shrink: 0;
   }
 }
 
@@ -390,6 +396,91 @@ button:not(.tab), .button {
       left: $unit-6;
       right: $unit-6;
       bottom: $unit-4;
+    }
+  }
+}
+
+//Table
+.p-datatable {
+  padding: $unit-4;
+  border-radius: $rounded-small;
+  box-shadow: $shadow-sm;
+  background-color: var(--content1);
+  width: 100%;
+  thead {
+    th {
+      padding: $unit-3 $unit-2;
+      background-color: var(--default-100);
+      color: var(--default-500);
+      &:first-of-type {
+        border-top-left-radius: $rounded-small;
+        border-bottom-left-radius: $rounded-small;
+      }
+      &:last-of-type {
+        border-top-right-radius: $rounded-small;
+        border-bottom-right-radius: $rounded-small;
+      }
+      .p-column-title {
+        font-size: $font-size-tiny;
+        font-weight: 600;
+        line-height: $line-height-tiny;
+        text-transform: uppercase;
+      }
+      &.p-sortable-column {
+        &:hover {
+          color: var(--default-400);
+          span[data-pc-section=sort] {
+            filter: var(--filter-default-400);
+          }
+        }
+        &[aria-sort=none] {
+          span[data-pc-section=sort] {
+            visibility: hidden;
+          }
+          &:hover {
+            span[data-pc-section=sort] {
+              visibility: visible;
+            }
+          }
+        }
+        span[data-pc-section=sort] {
+          margin-left: $unit-3;
+          width: 1rem;
+          height: 1rem;
+          background-image: url("../images/arrows/arrow-up.svg");
+          filter: var(--filter-default-500);
+          svg {
+            display: none;
+          }
+        }
+        &[aria-sort=descending] {
+          span[data-pc-section=sort] {
+            background-image: url("../images/arrows/arrow-down.svg");
+          }
+        }
+      }
+    }
+  }
+  tbody {
+    &::before {
+      //Spacing between header and body
+      content: "";
+      display: block;
+      height: $unit-2;
+    }
+    td {
+      padding: $unit-3 $unit-2;
+    }
+    tr:nth-child(2) td {
+      background-color: var(--default-100);
+      &:first-of-type {
+        border-top-left-radius: $rounded-small;
+        border-bottom-left-radius: $rounded-small;
+      }
+      &:last-of-type {
+        border-top-right-radius: $rounded-small;
+        border-bottom-right-radius: $rounded-small;
+      }
     }
   }
 }
