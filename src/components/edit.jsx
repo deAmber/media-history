@@ -8,7 +8,7 @@ import CreatableSelect from "react-select/creatable";
 
 const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => {
   const { type, setUpdateFlag } = mainStore();
-  const { meta, setMeta , movies, setMovies, shows, setShows, games, setGames, books, setBooks } = driveData();
+  const { meta, setMeta , movies, setMovies, shows, setShows, games, setGames, books, setBooks, settings } = driveData();
   const [ editType, setEditType ] = useState(forceEditType || type)
   const [ saving, setSaving ] = useState(false);
   const [ people, setPeople ] = useState(null);
@@ -261,12 +261,12 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
                    placeholder={'Rating out of 10'}/>
           </div>
           <div className={'inputWrapper'}>
-            <label htmlFor={'thoughts'}>Short Thoughts</label>
+            <label htmlFor={'thoughts'}>{settings.columnNames.shortDesc}</label>
             <textarea id={'thoughts'} name={'thoughts'} rows={2}
                       placeholder={'Spoiler free thoughts, notes or impressions.'}/>
           </div>
           <div className={'inputWrapper'}>
-            <label htmlFor={'review'}>Long Thoughts</label>
+            <label htmlFor={'review'}>{settings.columnNames.longDesc}</label>
             <textarea id={'review'} name={'review'} rows={5}
                       placeholder={'Detailed opinions, praise, and criticisms.'}/>
           </div>

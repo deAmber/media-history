@@ -471,7 +471,7 @@ button:not(.tab), .button {
     td {
       padding: $unit-3 $unit-2;
     }
-    tr:nth-child(2) td {
+    tr:nth-child(even) td {
       background-color: var(--default-100);
       &:first-of-type {
         border-top-left-radius: $rounded-small;

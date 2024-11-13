@@ -11,6 +11,8 @@ const driveData = create((set) => ({
   setGames: (option) => (set({games: option})),
   books: {},
   setBooks: (option) => (set({books: option})),
+  settings: {},
+  setSettings: (option) => (set({settings: option})),
 }));
 
 export default driveData;

@@ -7,11 +7,94 @@ const ClientId = "803994679308-qk0cpk827asnvoshdtegmuiq5igl8rbc.apps.googleuserc
 
 const Login = () => {
   const { setUser, setYear, setLoaded } = mainStore();
-  const { setMeta, meta, setMovies, setShows, setGames, setBooks } = driveData();
+  const { setMeta, meta, setMovies, setShows, setGames, setBooks, setSettings } = driveData();
   const [ loginError, setLoginError ] = useState(false);
   let fileIDs = {};
   //Lists all needed files and their default starting values
   const files = [
+    {
+      name: 'userSettings',
+      default: {
+        columnNames: {
+          'shortDesc': 'Short Thoughts',
+          'longDesc': 'Long Thoughts'
+        },
+        tableColumns: {
+          'movie': {
+            'release': true,
+            'watched': true,
+            'score': true,
+            'thoughts': true,
+            'review': true,
+            'location': true,
+            'cost': true,
+            'persons': true,
+            'time': true,
+            'notes': true,
+          },
+          'tv': {
+            'release': true,
+            'started': true,
+            'finished': true,
+            'score': true,
+            'thoughts': true,
+            'review': true,
+            'seasons': true,
+            'episodes': true,
+            'time': true,
+            'notes': true,
+          },
+          'book': {
+            'release': true,
+            'author': true,
+            'series': true,
+            'started': true,
+            'finished': true,
+            'score': true,
+            'thoughts': true,
+            'review': true,
+            'pages': true,
+            'words': true,
+            'format': true,
+            'type': true,
+            'notes': true,
+          },
+          'game': {
+            'release': true,
+            'started': true,
+            'finished': true,
+            'score': true,
+            'thoughts': true,
+            'review': true,
+            'consoles': true,
+            'achievementsGained' : true,
+            'achievementsTotal': true,
+            'time': true,
+            'notes': true,
+          }
+        },
+        ratingDescriptions: [
+          'Terrible',
+          'Really Bad',
+          'Bad',
+          'Eh',
+          'OK',
+          'Good',
+          'Really Good',
+          'Great',
+          'Amazing',
+          'Almost Perfect'
+        ],
+        defaultOpen: {value: 'movie', label: 'Movies'},
+        newRelease: {
+          'movie': 3,
+          'tv': 3,
+          'book': 3,
+          'game': 3
+        }
+      },
+      store: setSettings
+    },
     {
       name: 'metaData',
       default: {'people': [], 'cinemas': [], 'years': [], 'authors': [], 'bookSeries': [], 'consoles': [], 'movies': {}, 'tv': {}, 'game': {}, 'book': {}},
