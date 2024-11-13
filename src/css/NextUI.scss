@@ -254,6 +254,14 @@ button:not(.tab), .button {
     &.lg {
       width: $unit-12;
     }
+    &::before, &::after {
+      margin: auto;
+    }
+    &:hover {
+      &::before, &::after {
+        filter: var(--filter-default-500);
+      }
+    }
   }
   //colours
   &.primary {
@@ -270,6 +278,15 @@ button:not(.tab), .button {
   }
   &.danger {
     background-color: var(--danger);
+  }
+  //icons
+  &::before, &::after {
+    display: block;
+    width: 1.25rem;
+    height: 1.25rem;
+    background-position: center;
+    background-size: contain;
+    filter: var(--filter-foreground);
   }
 }
 .buttonGroup {
@@ -444,7 +461,7 @@ button:not(.tab), .button {
           }
         }
         span[data-pc-section=sort] {
-          margin-left: $unit-3;
+          margin-left: $unit-2;
           width: 1rem;
           height: 1rem;
           background-image: url("../images/arrows/arrow-up.svg");

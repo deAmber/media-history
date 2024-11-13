@@ -255,6 +255,12 @@ button:not(.tab).iconOnly.sm, .button.iconOnly.sm {
 button:not(.tab).iconOnly.lg, .button.iconOnly.lg {
   width: 48px;
 }
+button:not(.tab).iconOnly::before, button:not(.tab).iconOnly::after, .button.iconOnly::before, .button.iconOnly::after {
+  margin: auto;
+}
+button:not(.tab).iconOnly:hover::before, button:not(.tab).iconOnly:hover::after, .button.iconOnly:hover::before, .button.iconOnly:hover::after {
+  filter: var(--filter-default-500);
+}
 button:not(.tab).primary, .button.primary {
   background-color: var(--primary);
 }
@@ -269,6 +275,14 @@ button:not(.tab).warning, .button.warning {
 }
 button:not(.tab).danger, .button.danger {
   background-color: var(--danger);
+}
+button:not(.tab)::before, button:not(.tab)::after, .button::before, .button::after {
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
+  background-position: center;
+  background-size: contain;
+  filter: var(--filter-foreground);
 }
 
 .buttonGroup button:not(:first-of-type), .buttonGroup .button:not(:first-of-type) {
@@ -431,7 +445,7 @@ button:not(.tab).danger, .button.danger {
   visibility: visible;
 }
 .p-datatable thead th.p-sortable-column span[data-pc-section=sort] {
-  margin-left: 0.75rem;
+  margin-left: 0.5rem;
   width: 1rem;
   height: 1rem;
   background-image: url("../images/arrows/arrow-up.svg");

@@ -89,7 +89,7 @@ const ViewTable = ({}) => {
     {(checkColVis('type') && type.value === 'book') && <Column field={'type'} header={'Type'} sortable/>}
     {(checkColVis('time') && type.value !== 'book') && <Column field={'time'} header={`Total ${type.value === 'game' ? "Playtime" : "Runtime"}`} sortable/>}
     {checkColVis('notes') && <Column field={'notes'} header={'Notes'}/>}
-    <Column header={'Actions'} body={() => {return '-'}}/>
+    <Column header={'Actions'} body={(v) => {return <button className={'editRow iconOnly primary'} onClick={() => {console.log(v)}} title={'Edit'}/>}}/>
   </DataTable>
 }
 

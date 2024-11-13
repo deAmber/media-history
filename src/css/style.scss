@@ -47,7 +47,12 @@ body {
   min-height: calc( 100% - 92px );
 }
 
+
 //Edit entry form
+.p-datatable button.editRow::before {
+  content: "";
+  background-image: url("../images/content/edit-2.svg");
+}
 #editModal-content {
   > .inputWrapper {
     border-bottom: 1px solid var(--divider);
