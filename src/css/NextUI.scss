@@ -165,6 +165,7 @@ select {
     line-height: $line-height-small;
   }
   .chip {
+    margin-right: $unit-1;
     .react-select__multi-value__remove {
       background-image: url("../images/essential/close-circle.svg");
       width: 1rem;

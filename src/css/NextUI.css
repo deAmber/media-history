@@ -165,6 +165,9 @@ select {
   font-size: 0.875rem;
   line-height: 1.25rem;
 }
+.react-select__control .chip {
+  margin-right: 0.25rem;
+}
 .react-select__control .chip .react-select__multi-value__remove {
   background-image: url("../images/essential/close-circle.svg");
   width: 1rem;

@@ -8,11 +8,13 @@ import CreatableSelect from "react-select/creatable";
 
 const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => {
   const { type, year } = mainStore();
-  const { meta, setMeta , movies, setMovies } = driveData();
+  const { meta, setMeta , movies, setMovies, shows, setShows, games, setGames, books, setBooks } = driveData();
   const [ editType, setEditType ] = useState(forceEditType || type)
   const [ saving, setSaving ] = useState(false);
   const [ people, setPeople ] = useState(null);
   const [ consoles, setConsoles ] = useState(null);
+  const [ author, setAuthor ] = useState(null);
+  const [ bookSeries, setBookSeries ] = useState(null);
   const formRef = useRef();
 
   const getNowDate = () => {
@@ -21,9 +23,30 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
     return now.toJSON().slice(0,10)+"";
   }
 
+  const handleDataInsert = (dataReference, year, date, data) => {
+    //Add entry to movie file
+    let temp = dataReference;
+    if (!temp[year]) {
+      temp[year] = [data];
+    } else {
+      temp[year].push(data);
+      //Sort new to old
+      temp[year].sort((a, b) => {
+        let aDates = a[date].split('-').map(v => {return parseInt(v)});
+        let bDates = b[date].split('-').map(v => {return parseInt(v)});
+        if (aDates[1] !== bDates[1]) {
+          return bDates[1] - aDates[1];
+        } else {
+          return bDates[2] - aDates[2];
+        }
+      });
+    }
+    return temp;
+  }
   //Updates
   const addEntry = (data) => {
-    const year = parseInt(data.release.split('-')[0]);
+    //TODO: ranking + updating all other entries with a higher rank
+    const year = parseInt(data[editType.value === 'movie' ? 'dateWatched' : 'started'].split('-')[0]);
     let updateMeta = false;
     let tempMeta = meta;
     //Add year to support years list
@@ -32,23 +55,105 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
       tempMeta['years'].sort().reverse();
       updateMeta = true;
     }
+    //Parse hours and minutes into a single time field
+    if (editType.value !== 'book') {
+      let hours = parseInt(data.hours || 0);
+      let minutes = parseInt(data.minutes);
+      if (minutes > 60) {
+        hours = hours + parseInt(minutes / 60);
+        minutes = minutes % 60;
+      }
+      data.time = `${hours}:${minutes < 10 ? `0${minutes}` : minutes}`;
+      delete data.hours;
+      delete data.minutes;
+    }
     //Update date in Zustand store
     if (editType.value === 'movie') {
-      let temp = movies;
-      if (!temp[year]) {
-        temp[year] = [data];
-      } else {
-        temp[year].push(data);
+      //Add seen with people
+      if (people?.length > 0) {
+        let existingPersons = tempMeta.people
+        data.persons = people.map(v => {
+          if (!existingPersons.includes(v.label)) {
+            existingPersons.push(v.label);
+            updateMeta = true;
+          }
+          return v.label
+        });
+        tempMeta.people = existingPersons;
       }
-      //TODO: add location and people lists to meta and include in form data
-      //TODO: calculate total runtime as h:m
+      //Add Location to meta package
+      if (data.location && !meta.cinemas.includes(data.location)) {
+        meta.cinemas.push(data.location);
+        updateMeta = true;
+      }
+      //Parse cost to a float
+      if (data.cost) {
+        data.cost = parseFloat(data.cost);
+      } else {
+        data.cost = null;
+      }
+      //Add entry to movie file
+      let temp = handleDataInsert(movies, year, 'dateWatched', data);
       setMovies(temp);
       updateFile(meta.fileIds.movies, movies).then(() => {
         setSaving(false);
         closeButton();
       });
+    } else if (editType.value === 'tv') {
+      //TODO: Handling multiple seasons (i.e. 1-3)
+      data.episodes = parseInt(data.episodes);
+      //Add entry to TV file
+      let temp = handleDataInsert(shows, year, 'started', data);
+      setShows(temp);
+      updateFile(meta.fileIds.tv, shows).then(() => {
+        setSaving(false);
+        closeButton();
+      });
+    } else if (editType.value === 'game') {
+      //Add console to meta list
+      if (consoles) {
+        data.consoles = consoles.label;
+        if (!tempMeta.consoles.includes(consoles.label)) {
+          tempMeta.consoles.push(consoles.label);
+          updateMeta = true;
+        }
+      } else {
+        data.consoles = false;
+      }
+      //Add entry to Game file
+      let temp = handleDataInsert(games, year, 'started', data);
+      setGames(temp);
+      updateFile(meta.fileIds.game, games).then(() => {
+        setSaving(false);
+        closeButton();
+      });
+    } else if (editType.value === 'book') {
+      //Add author
+      data.author = author.label;
+      if (!tempMeta.authors.includes(author.label)) {
+        tempMeta.authors.push(author.label);
+        updateMeta = true;
+      }
+      //Add book series
+      if (bookSeries) {
+        data.series = bookSeries.label;
+        if (!tempMeta.bookSeries.includes(bookSeries.label)) {
+          tempMeta.bookSeries.push(bookSeries.label);
+          updateMeta = true;
+        }
+      } else {
+        data.series = null;
+        data.seriesNo = null;
+      }
+      //TODO: progress updates
+      //Add entry to Game file
+      let temp = handleDataInsert(books, year, 'started', data);
+      setBooks(temp);
+      updateFile(meta.fileIds.book, books).then(() => {
+        setSaving(false);
+        closeButton();
+      });
     }
-    //TODO: other types
     //Update meta file (if required)
     if (updateMeta) {
       setMeta(tempMeta);
@@ -93,13 +198,23 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
           {editType.value === 'book' && <>
             <div className={'inputWrapper required'}>
               <label htmlFor={'author'}>Author</label>
-              <input id={'author'} name={'author'} type={'text'} required/>
+              <CreatableSelect id={'author'} options={meta.authors.map(v => {
+                return {value: v, label: v}
+              })}
+                value={author} onChange={setAuthor}
+                menuPortalTarget={document.body}
+                unstyled classNamePrefix={'react-select'} required/>
             </div>
             <fieldset className={'inputSplit'}>
               <legend>Series</legend>
               <div className={'inputWrapper'}>
                 <label htmlFor={'series'}>Series</label>
-                <input id={'series'} name={'series'} type={'text'}/>
+                <CreatableSelect id={'series'} options={meta.bookSeries.map(v => {
+                  return {value: v, label: v}
+                })}
+                  value={bookSeries} onChange={setBookSeries}
+                  menuPortalTarget={document.body}
+                  unstyled classNamePrefix={'react-select'} isClearable/>
               </div>
               <div className={'inputWrapper'}>
                 <label htmlFor={'seriesNo'}>Number</label>
@@ -145,8 +260,8 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
               <input id={'location'} name={'location'} type={'text'} list={'locations'}
                      placeholder={'Name of Cinema, a persons house, your phone...'}/>
               <datalist id={'locations'}>
-                {meta.cinemas.map(v => {
-                  return (<option label={v}>{v}</option>)
+                {meta.cinemas.map((v, i) => {
+                  return (<option key={i} label={v}>{v}</option>)
                 })}
               </datalist>
             </div>
@@ -182,16 +297,12 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
           {editType.value === 'game' && <>
             <div className={'inputWrapper'}>
               <label htmlFor={'console'}>Console</label>
-              <CreatableSelect id={'console'} isMulti options={meta.consoles.map(v => {
+              <CreatableSelect id={'console'} options={meta.consoles.map(v => {
                 return {value: v, label: v}
               })}
-                               value={consoles} onChange={setConsoles}
-                               menuPortalTarget={document.body} placeholder={'PC, PS5, XBox One...'}
-                               unstyled classNamePrefix={'react-select'} classNames={{
-                multiValue: () => {
-                  return 'chip'
-                }
-              }}/>
+                 value={consoles} onChange={setConsoles}
+                 menuPortalTarget={document.body} placeholder={'PC, PS5, XBox One...'}
+                 unstyled classNamePrefix={'react-select'} isClearable/>
             </div>
             <fieldset className={'inputSplit'}>
               <legend>Achievements</legend>

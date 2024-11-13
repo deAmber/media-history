@@ -7,21 +7,35 @@ const ClientId = "803994679308-qk0cpk827asnvoshdtegmuiq5igl8rbc.apps.googleuserc
 
 const Login = () => {
   const { setUser, setYear, setLoaded } = mainStore();
-  const { setMeta, meta, setMovies } = driveData();
+  const { setMeta, meta, setMovies, setShows, setGames, setBooks } = driveData();
   const [ loginError, setLoginError ] = useState(false);
   let fileIDs = {};
   //Lists all needed files and their default starting values
-  //TODO: more files, more setstores
   const files = [
     {
       name: 'metaData',
-      default: {'people': [], 'cinemas': [], 'years': [], 'consoles': [], 'movies': {}, 'tv': {}},
+      default: {'people': [], 'cinemas': [], 'years': [], 'authors': [], 'bookSeries': [], 'consoles': [], 'movies': {}, 'tv': {}, 'game': {}, 'book': {}},
       store: setMeta
     },
     {
       name: 'movies',
       default: {},
       store: setMovies
+    },
+    {
+      name: 'tv',
+      default: {},
+      store: setShows
+    },
+    {
+      name: 'book',
+      default: {},
+      store: setBooks
+    },
+    {
+      name: 'game',
+      default: {},
+      store: setGames
     },
   ];
 
@@ -154,7 +168,6 @@ const Login = () => {
     //Gets contents of files or creates them if they do not exist
     files.forEach(v => {
       console.log('Loading file', v.name)
-      //TODO: might need to async this so users dont see welcome screen until all data is loaded - probably pair with a loading screen
       fetchFile(v.name, v.default).then(content => {
         console.log(content)
         if (content) {
