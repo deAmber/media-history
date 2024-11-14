@@ -246,6 +246,49 @@ select {
   filter: var(--filter-foreground);
 }
 
+.switch input:checked + label .toggleWrap {
+  background-color: var(--default-400);
+  border-color: var(--default-400);
+}
+.switch input:checked + label .toggleWrap .toggle {
+  right: 0.25rem;
+}
+.switch label {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+.switch label:focus-visible {
+  box-shadow: none !important;
+  outline: none !important;
+}
+.switch label:focus-visible .toggleWrap {
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+}
+.switch .toggleWrap {
+  background-color: var(--default-200);
+  border: 2px solid var(--default-200);
+  border-radius: 0.875rem;
+  width: 2.5rem;
+  height: 1.5rem;
+  padding: 0.25rem;
+  display: block;
+  position: relative;
+  cursor: pointer;
+}
+.switch .toggleWrap .toggle {
+  border-radius: 50%;
+  background-color: var(--background);
+  width: 1rem;
+  height: 1rem;
+  display: block;
+  position: absolute;
+  right: calc(100% - 1.25rem);
+  top: calc(50% - 0.5rem);
+  transition: right 0.1s linear;
+  filter: drop-shadow(0px 2px 4px rgba(52, 64, 84, 0.12)) drop-shadow(0px 3px 12px rgba(52, 64, 84, 0.13));
+}
+
 button:not(.tab), .button {
   border-radius: 0.5rem;
   padding: 0px 1rem;

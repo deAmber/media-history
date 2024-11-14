@@ -38,6 +38,10 @@ body {
   h1 {
     color: #F4F4F5;
   }
+  button.settings::before {
+    content: "";
+    background-image: url("../images/essential/menu.svg");
+  }
 }
 
 //Body
@@ -50,8 +54,20 @@ body {
   min-height: calc( 100% - 92px );
 }
 
+//Bootstrap
 .d-none {
   display: none;
+}
+.visually-hidden {
+  border: 0 !important;
+  clip: rect(0, 0, 0, 0) !important;
+  height: 1px !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  position: absolute !important;
+  width: 1px !important;
+  white-space: nowrap !important;
 }
 
 //Edit entry form
@@ -86,5 +102,17 @@ body {
   .inputWrapper.inline label {
     flex-grow: 1;
     flex-shrink: 0;
+  }
+  #generic-pane > .inputWrapper {
+    padding-bottom: $unit-6;
+    border-bottom: 1px solid var(--default-500);
+    margin-bottom: $unit-4;
+  }
+  #table-pane {
+    div[role=tabpanel] fieldset {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: $unit-3;
+    }
   }
 }

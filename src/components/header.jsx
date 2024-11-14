@@ -2,25 +2,64 @@ import MicroModal from "react-micro-modal";
 import { useState } from "react";
 import mainStore from "../stores/mainStore.js";
 import driveData from "../stores/driveData.js";
+import Switch from "./formElements/switch.jsx";
+import { updateFile } from "../utilities.js";
+import Loader from "./loader.jsx";
 
 const Header = () => {
     const { user } = mainStore()
-    const { settings, setSettings } = driveData();
+    const { settings, setSettings, meta } = driveData();
     const [ openSettings, setOpenSettings ] = useState();
     const [ openTab, setOpenTab ] = useState('generic');
+    const [ tableTab, setTableTab ] = useState('movie');
+    const [ saving, setSaving ] = useState(false);
 
+    const updateSettings = (data) => {
+        let newSettings = settings;
+        //Default open
+        newSettings.defaultOpen = JSON.parse(data.defaultMedia);
+        //Field Names
+        newSettings.columnNames.shortDesc = data.shortDesc;
+        newSettings.columnNames.longDesc = data.longDesc;
+        //New releases
+        //TODO: use this
+        newSettings.newRelease = {
+            'movie': data['release-movie'],
+            'tv': data['release-tv'],
+            'book': data['release-game'],
+            'game': data['release-book']
+        }
+        //Rating Descriptions
+        //TODO: use this
+
+        //Table Columns
+        Object.keys(settings.tableColumns).forEach(mediaType => {
+            Object.keys(settings.tableColumns[mediaType]).forEach(key => {
+                newSettings.tableColumns[mediaType][key] = data[`${mediaType}-${key}`] === "on"
+            })
+        });
+        //Update save file
+        setSettings(newSettings);
+        updateFile(meta.fileIds.userSettings, newSettings).then(() => {
+            setSaving(false);
+            setOpenSettings(false);
+        })
+    }
+//TODO: add reset to default button per fieldset
+    //TODO add darkmode switch
     return (
         <div role={'heading'} className={'header'}>
             <h1>Media History</h1>
-            {user && <button className={'iconOnly primary sm'} title={'Open settings'} onClick={() => {setOpenSettings(true)}}/>}
+            {user && <button className={'iconOnly primary sm settings'} title={'Open settings'} onClick={() => {setOpenSettings(true)}}/>}
             <MicroModal open={openSettings} handleClose={() => {setOpenSettings(false)}}
                 closeOnOverlayClick={false} children={(handleClose) => {
                     return <>
+                        {saving && <Loader message={`Saving new settings, please wait...`}/>}
                         <div className={'title'}>
                             <h2>Settings</h2>
                         </div>
                         <div className={'content'}>
-                            <div role={'tablist'} id={'tabNav'} className={'tabGroup sm'}>
+                            <div role={'tablist'} id={'tabNav'} className={'tabGroup'}>
                                 <button className={`tab ${openTab === 'generic' && 'active'}`} id={'generic'} aria-controls={'generic-pane'}
                                         role={`tab`}
                                         aria-selected={openTab === 'generic'} onClick={() => {
@@ -48,51 +87,65 @@ const Header = () => {
                             </div>
                             <form id={'settingsForm'} onSubmit={(e) => {
                                 e.preventDefault();
+                                setSaving(true);
                                 const formData = Object.fromEntries(new FormData(document.getElementById('settingsForm')));
                                 console.log(formData)
+                                updateSettings(formData);
                                 return;
                             }}>
                                 <div id={'generic-pane'} role={'tabpanel'} aria-labelledby={'generic'}
                                      className={openTab !== 'generic' ? 'd-none' : ''}>
+                                    <div className={'inputWrapper'}>
+                                        <label htmlFor={'defaultMedia'}>Default media type</label>
+                                        <select name={'defaultMedia'} id={'defaultMedia'} defaultValue={JSON.stringify(settings.defaultOpen)} required>
+                                            <option value={JSON.stringify({value: 'movie', label: 'Movies'})}>Movies</option>
+                                            <option value={JSON.stringify({value: "tv", label: "TV Shows"})}>TV Shows</option>
+                                            <option value={JSON.stringify({value: "game", label: "Video Games"})}>Video Games</option>
+                                            <option value={JSON.stringify({value: "book", label: "Books"})}>Books</option>
+                                        </select>
+                                    </div>
                                     <fieldset>
-                                        <legend>Alternative field names</legend>
+                                    <legend>Alternative field names</legend>
                                         <div className={'inputWrapper'}>
                                             <label
-                                                htmlFor={'shortDesc'}>Short Thoughts</label>
-                                            <input id={'shortDesc'} name={'shortDesc'} defaultValue={settings.columnNames.shortDesc} type={'text'} required/>
+                                              htmlFor={'shortDesc'}>Short Thoughts</label>
+                                            <input id={'shortDesc'} name={'shortDesc'}
+                                                   defaultValue={settings.columnNames.shortDesc} type={'text'}
+                                                   required/>
                                         </div>
                                         <div className={'inputWrapper'}>
                                             <label
-                                                htmlFor={'longDesc'}>Long Thoughts</label>
-                                            <input id={'longDesc'} name={'longDesc'} defaultValue={settings.columnNames.longDesc} type={'text'} required/>
+                                              htmlFor={'longDesc'}>Long Thoughts</label>
+                                            <input id={'longDesc'} name={'longDesc'}
+                                                   defaultValue={settings.columnNames.longDesc} type={'text'} required/>
                                         </div>
                                     </fieldset>
                                     <fieldset>
                                         <legend>New release cutoff</legend>
                                         <div className={'inputWrapper inline'}>
                                             <label
-                                                htmlFor={'release-movie'}>Movies</label>
+                                              htmlFor={'release-movie'}>Movies</label>
                                             <input id={'release-movie'} name={'release-movie'}
                                                    defaultValue={settings.newRelease.movie} type={'number'} min={0}
                                                    required/>
                                         </div>
                                         <div className={'inputWrapper inline'}>
                                             <label
-                                                htmlFor={'release-tv'}>TV Shows</label>
+                                              htmlFor={'release-tv'}>TV Shows</label>
                                             <input id={'release-tv'} name={'release-tv'}
                                                    defaultValue={settings.newRelease.tv} type={'number'} min={0}
                                                    required/>
                                         </div>
                                         <div className={'inputWrapper inline'}>
                                             <label
-                                                htmlFor={'release-game'}>Video Games</label>
+                                              htmlFor={'release-game'}>Video Games</label>
                                             <input id={'release-game'} name={'release-game'}
                                                    defaultValue={settings.newRelease.game} type={'number'} min={0}
                                                    required/>
                                         </div>
                                         <div className={'inputWrapper inline'}>
                                             <label
-                                                htmlFor={'release-book'}>Books</label>
+                                              htmlFor={'release-book'}>Books</label>
                                             <input id={'release-book'} name={'release-book'}
                                                    defaultValue={settings.newRelease.book} type={'number'} min={0}
                                                    required/>
@@ -105,28 +158,38 @@ const Header = () => {
                                         <legend>Name your scores</legend>
                                         <div className={'inputWrapper inline'}>
                                             <label
-                                                htmlFor={'name-0'}>1</label>
-                                            <input id={'name-0'} name={'name-0'} defaultValue={settings.ratingDescriptions[0]} type={'text'} required/>
+                                              htmlFor={'name-0'}>1</label>
+                                            <input id={'name-0'} name={'name-0'}
+                                                   defaultValue={settings.ratingDescriptions[0]} type={'text'}
+                                                   required/>
                                         </div>
                                         <div className={'inputWrapper inline'}>
                                             <label
-                                                htmlFor={'name-1'}>2</label>
-                                            <input id={'name-1'} name={'name-1'} defaultValue={settings.ratingDescriptions[1]} type={'text'} required/>
+                                              htmlFor={'name-1'}>2</label>
+                                            <input id={'name-1'} name={'name-1'}
+                                                   defaultValue={settings.ratingDescriptions[1]} type={'text'}
+                                                   required/>
                                         </div>
                                         <div className={'inputWrapper inline'}>
                                             <label
-                                                htmlFor={'name-2'}>3</label>
-                                            <input id={'name-2'} name={'name-2'} defaultValue={settings.ratingDescriptions[2]} type={'text'} required/>
+                                              htmlFor={'name-2'}>3</label>
+                                            <input id={'name-2'} name={'name-2'}
+                                                   defaultValue={settings.ratingDescriptions[2]} type={'text'}
+                                                   required/>
                                         </div>
                                         <div className={'inputWrapper inline'}>
                                             <label
-                                                htmlFor={'name-3'}>4</label>
-                                            <input id={'name-3'} name={'name-3'} defaultValue={settings.ratingDescriptions[3]} type={'text'} required/>
+                                              htmlFor={'name-3'}>4</label>
+                                            <input id={'name-3'} name={'name-3'}
+                                                   defaultValue={settings.ratingDescriptions[3]} type={'text'}
+                                                   required/>
                                         </div>
                                         <div className={'inputWrapper inline'}>
                                             <label
-                                                htmlFor={'name-4'}>5</label>
-                                            <input id={'name-4'} name={'name-4'} defaultValue={settings.ratingDescriptions[4]} type={'text'} required/>
+                                              htmlFor={'name-4'}>5</label>
+                                            <input id={'name-4'} name={'name-4'}
+                                                   defaultValue={settings.ratingDescriptions[4]} type={'text'}
+                                                   required/>
                                         </div>
                                         <div className={'inputWrapper inline'}>
                                             <label
@@ -156,7 +219,140 @@ const Header = () => {
                                     </fieldset>
                                 </div>
                                 <div id={'table-pane'} role={'tabpanel'} aria-labelledby={'table'}
-                                     className={openTab !== 'table' ? 'd-none' : ''}></div>
+                                     className={openTab !== 'table' ? 'd-none' : ''}>
+                                    <div role={'tablist'} id={'tableSettingsNav'} className={'tabGroup sm'}>
+                                        <button className={`tab ${tableTab === 'movie' && 'active'}`} id={'movie'}
+                                                aria-controls={'movie-pane'}
+                                                role={`tab`} type={"button"}
+                                                aria-selected={tableTab === 'movie'} onClick={() => {
+                                            setTableTab('movie')
+                                        }}>Movies
+                                        </button>
+                                        <button className={`tab ${tableTab === 'tv' && 'active'}`} id={'tv'}
+                                                aria-controls={'tv-pane'}
+                                                role={`tab`} type={"button"}
+                                                aria-selected={tableTab === 'tv'} onClick={() => {
+                                            setTableTab('tv')
+                                        }}>TV Shows
+                                        </button>
+                                        <button className={`tab ${tableTab === 'game' && 'active'}`} id={'game'}
+                                                aria-controls={'game-pane'}
+                                                role={`tab`} type={"button"}
+                                                aria-selected={tableTab === 'game'} onClick={() => {
+                                            setTableTab('game')
+                                        }}>Video Games
+                                        </button>
+                                        <button className={`tab ${tableTab === 'book' && 'active'}`} id={'book'}
+                                                aria-controls={'book-pane'}
+                                                role={`tab`} type={"button"}
+                                                aria-selected={tableTab === 'book'} onClick={() => {
+                                            setTableTab('book')
+                                        }}>Books
+                                        </button>
+                                    </div>
+                                    <div id={'movie-pane'} role={'tabpanel'} aria-labelledby={'movie'}
+                                         className={tableTab !== 'movie' ? 'd-none' : ''}>
+                                        <fieldset>
+                                            <legend>Table Columns</legend>
+                                            <Switch label={'Release date'} id={'movie-release'} defaultChecked={settings.tableColumns.movie.release}/>
+                                            <Switch label={'Date watched'} id={'movie-watched'} defaultChecked={settings.tableColumns.movie.watched}/>
+                                            <Switch label={'Score'} id={'movie-score'} defaultChecked={settings.tableColumns.movie.score}/>
+                                            <Switch label={settings.columnNames.shortDesc} id={'movie-thoughts'} defaultChecked={settings.tableColumns.movie.thoughts}/>
+                                            <Switch label={settings.columnNames.longDesc} id={'movie-review'} defaultChecked={settings.tableColumns.movie.review}/>
+                                            <Switch label={'Location'} id={'movie-location'} defaultChecked={settings.tableColumns.movie.location}/>
+                                            <Switch label={'Cost'} id={'movie-cost'} defaultChecked={settings.tableColumns.movie.cost}/>
+                                            <Switch label={'Seen with'} id={'movie-persons'} defaultChecked={settings.tableColumns.movie.persons}/>
+                                            <Switch label={'Total Runtime'} id={'movie-time'} defaultChecked={settings.tableColumns.movie.time}/>
+                                            <Switch label={'Notes'} id={'movie-notes'} defaultChecked={settings.tableColumns.movie.notes}/>
+                                        </fieldset>
+                                    </div>
+                                    <div id={'tv-pane'} role={'tabpanel'} aria-labelledby={'tv'}
+                                         className={tableTab !== 'tv' ? 'd-none' : ''}>
+                                        <fieldset>
+                                            <legend>Table Columns</legend>
+                                            <Switch label={'Release date'} id={'tv-release'}
+                                                    defaultChecked={settings.tableColumns.tv.release}/>
+                                            <Switch label={'Date Started'} id={'tv-started'}
+                                                    defaultChecked={settings.tableColumns.tv.started}/>
+                                            <Switch label={'Date Finished'} id={'tv-finished'}
+                                                    defaultChecked={settings.tableColumns.tv.finished}/>
+                                            <Switch label={'Score'} id={'tv-score'}
+                                                    defaultChecked={settings.tableColumns.tv.score}/>
+                                            <Switch label={settings.columnNames.shortDesc} id={'tv-thoughts'}
+                                                    defaultChecked={settings.tableColumns.movie.thoughts}/>
+                                            <Switch label={settings.columnNames.longDesc} id={'tv-review'}
+                                                    defaultChecked={settings.tableColumns.tv.review}/>
+                                            <Switch label={'Seasons'} id={'tv-seasons'}
+                                                    defaultChecked={settings.tableColumns.tv.seasons}/>
+                                            <Switch label={'Episodes'} id={'tv-episodes'}
+                                                    defaultChecked={settings.tableColumns.tv.episodes}/>
+                                            <Switch label={'Total Runtime'} id={'tv-time'}
+                                                    defaultChecked={settings.tableColumns.tv.time}/>
+                                            <Switch label={'Notes'} id={'tv-notes'}
+                                                    defaultChecked={settings.tableColumns.tv.notes}/>
+                                        </fieldset>
+                                    </div>
+                                    <div id={'game-pane'} role={'tabpanel'} aria-labelledby={'game'}
+                                         className={tableTab !== 'game' ? 'd-none' : ''}>
+                                        <fieldset>
+                                            <legend>Table Columns</legend>
+                                            <Switch label={'Release date'} id={'game-release'}
+                                                    defaultChecked={settings.tableColumns.game.release}/>
+                                            <Switch label={'Date Started'} id={'game-started'}
+                                                    defaultChecked={settings.tableColumns.game.started}/>
+                                            <Switch label={'Date Finished'} id={'game-finished'}
+                                                    defaultChecked={settings.tableColumns.game.finished}/>
+                                            <Switch label={'Score'} id={'game-score'}
+                                                    defaultChecked={settings.tableColumns.game.score}/>
+                                            <Switch label={settings.columnNames.shortDesc} id={'game-thoughts'}
+                                                    defaultChecked={settings.tableColumns.game.thoughts}/>
+                                            <Switch label={settings.columnNames.longDesc} id={'game-review'}
+                                                    defaultChecked={settings.tableColumns.game.review}/>
+                                            <Switch label={'Console'} id={'game-consoles'}
+                                                    defaultChecked={settings.tableColumns.game.consoles}/>
+                                            <Switch label={'Achievements Gained'} id={'game-achievementsGained'}
+                                                    defaultChecked={settings.tableColumns.game.achievementsGained}/>
+                                            <Switch label={'Achievements Total'} id={'game-achievementsTotal'}
+                                                    defaultChecked={settings.tableColumns.game.achievementsTotal}/>
+                                            <Switch label={'Total Runtime'} id={'game-time'}
+                                                    defaultChecked={settings.tableColumns.game.time}/>
+                                            <Switch label={'Notes'} id={'game-notes'}
+                                                    defaultChecked={settings.tableColumns.game.notes}/>
+                                        </fieldset>
+                                    </div>
+                                    <div id={'book-pane'} role={'tabpanel'} aria-labelledby={'book'}
+                                         className={tableTab !== 'book' ? 'd-none' : ''}>
+                                        <fieldset>
+                                            <legend>Table Columns</legend>
+                                            <Switch label={'Release date'} id={'book-release'}
+                                                    defaultChecked={settings.tableColumns.book.release}/>
+                                            <Switch label={'Author'} id={'book-author'}
+                                                    defaultChecked={settings.tableColumns.book.author}/>
+                                            <Switch label={'Series'} id={'book-series'}
+                                                    defaultChecked={settings.tableColumns.book.series}/>
+                                            <Switch label={'Date Started'} id={'book-started'}
+                                                    defaultChecked={settings.tableColumns.book.started}/>
+                                            <Switch label={'Date Finished'} id={'book-finished'}
+                                                    defaultChecked={settings.tableColumns.book.finished}/>
+                                            <Switch label={'Score'} id={'book-score'}
+                                                    defaultChecked={settings.tableColumns.book.score}/>
+                                            <Switch label={settings.columnNames.shortDesc} id={'book-thoughts'}
+                                                    defaultChecked={settings.tableColumns.book.thoughts}/>
+                                            <Switch label={settings.columnNames.longDesc} id={'book-review'}
+                                                    defaultChecked={settings.tableColumns.book.review}/>
+                                            <Switch label={'Pages'} id={'book-pages'}
+                                                    defaultChecked={settings.tableColumns.book.pages}/>
+                                            <Switch label={'Words'} id={'book-words'}
+                                                    defaultChecked={settings.tableColumns.book.words}/>
+                                            <Switch label={'format'} id={'book-format'}
+                                                    defaultChecked={settings.tableColumns.book.format}/>
+                                            <Switch label={'Type'} id={'book-type'}
+                                                    defaultChecked={settings.tableColumns.book.type}/>
+                                            <Switch label={'Notes'} id={'book-notes'}
+                                                    defaultChecked={settings.tableColumns.book.notes}/>
+                                        </fieldset>
+                                    </div>
+                                </div>
                                 <div id={'data-pane'} role={'tabpanel'} aria-labelledby={'data'}
                                      className={openTab !== 'data' ? 'd-none' : ''}></div>
                             </form>
@@ -166,7 +362,7 @@ const Header = () => {
                             <button form={'settingsForm'} type={'submit'} className={'primary'}>Save</button>
                         </div>
                     </>
-                }}
+            }}
             />
         </div>
     )

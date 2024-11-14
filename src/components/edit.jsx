@@ -382,15 +382,15 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
             <label htmlFor={'notes'}>Notes</label>
             <input id={'notes'} name={'notes'} type={'text'}/>
           </div>
-          </form>
-            </div>
-            <div className={'footer'}>
-          <button onClick={closeButton} className={'danger'}>Cancel</button>
-          <button type={"submit"} form={'editForm'} className={'primary'} onClick={() => {
-            formRef.current.classList.add('submitted')
-          }}>Save
-          </button>
-        </div>
+        </form>
+      </div>
+      <div className={'footer'}>
+        <button onClick={closeButton} className={'danger'}>Cancel</button>
+        <button type={"submit"} form={'editForm'} className={'primary'} onClick={() => {
+          formRef.current.classList.add('submitted')
+        }}>Save
+        </button>
+      </div>
     </>
   )
 }

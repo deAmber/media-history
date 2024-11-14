@@ -37,6 +37,10 @@ body {
 .header h1 {
   color: #F4F4F5;
 }
+.header button.settings::before {
+  content: "";
+  background-image: url("../images/essential/menu.svg");
+}
 
 #main {
   padding: 1.5rem 48px;
@@ -49,6 +53,18 @@ body {
 
 .d-none {
   display: none;
+}
+
+.visually-hidden {
+  border: 0 !important;
+  clip: rect(0, 0, 0, 0) !important;
+  height: 1px !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  position: absolute !important;
+  width: 1px !important;
+  white-space: nowrap !important;
 }
 
 .p-datatable button.editRow::before {
@@ -77,6 +93,16 @@ body {
 #settingsForm .inputWrapper.inline label {
   flex-grow: 1;
   flex-shrink: 0;
+}
+#settingsForm #generic-pane > .inputWrapper {
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--default-500);
+  margin-bottom: 1rem;
+}
+#settingsForm #table-pane div[role=tabpanel] fieldset {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
 }
 
 /*# sourceMappingURL=style.css.map */

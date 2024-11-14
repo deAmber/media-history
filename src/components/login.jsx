@@ -6,7 +6,7 @@ import driveData from "../stores/driveData.js";
 const ClientId = "803994679308-qk0cpk827asnvoshdtegmuiq5igl8rbc.apps.googleusercontent.com";
 
 const Login = () => {
-  const { setUser, setYear, setLoaded } = mainStore();
+  const { setUser, setYear, setLoaded, setType } = mainStore();
   const { setMeta, meta, setMovies, setShows, setGames, setBooks, setSettings } = driveData();
   const [ loginError, setLoginError ] = useState(false);
   let fileIDs = {};
@@ -261,6 +261,10 @@ const Login = () => {
               setYear({label: content['years'][0], value: content['years'][0]});
             }
           } else {
+            if (v.name === 'userSettings') {
+              console.log(content.defaultOpen)
+              setType(content.defaultOpen);
+            }
             v.store(content);
           }
           loadedFiles++;
