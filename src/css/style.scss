@@ -32,6 +32,9 @@ body {
   width: 100%;
   padding: $unit-8 $unit-12;
   background-color: #002E62;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   h1 {
     color: #F4F4F5;
   }
@@ -47,6 +50,9 @@ body {
   min-height: calc( 100% - 92px );
 }
 
+.d-none {
+  display: none;
+}
 
 //Edit entry form
 .p-datatable button.editRow::before {
@@ -58,16 +64,27 @@ body {
     border-bottom: 1px solid var(--divider);
     padding-bottom: $unit-4;
     margin-bottom: -$unit-2;
+    margin-top: 0;
   }
   form {
-    .inputWrapper {
-      margin-top: $unit-6;
-    }
     .inputSplit {
       margin-top: $unit-6;
       .inputWrapper {
         margin-top: 0;
       }
     }
+  }
+}
+
+//Settings modal
+#settingsForm {
+  > div > fieldset:not(:last-of-type) {
+    padding-bottom: $unit-6;
+    border-bottom: 1px solid var(--default-500);
+    margin-bottom: $unit-4;
+  }
+  .inputWrapper.inline label {
+    flex-grow: 1;
+    flex-shrink: 0;
   }
 }

@@ -68,10 +68,11 @@ body {
   flex-direction: column;
   width: 100%;
   gap: $unit-3;
+  margin-top: $unit-6;
   label, .label {
     font-size: $font-size-small;
     line-height: $line-height-small;
-    color: var(--default-600);
+    color: var(--foreground);
   }
   &.required {
     label, .label {
@@ -104,6 +105,28 @@ body {
       bottom: $unit-2;
       right: $unit-3;
     }
+  }
+  &.inline {
+    flex-direction: row;
+    align-items: center;
+    label, .label {
+      min-width: 1rem;
+    }
+  }
+}
+fieldset {
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  border: none;
+  legend {
+    font-size: $font-size-large;
+    line-height: $line-height-large;
+    color: var(--default-400);
+    font-weight: 700;
+  }
+  .inputWrapper:first-of-type {
+    margin-top: $unit-4;
   }
 }
 form.submitted input:invalid {

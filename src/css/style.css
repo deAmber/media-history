@@ -30,6 +30,9 @@ body {
   width: 100%;
   padding: 2rem 48px;
   background-color: #002E62;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .header h1 {
   color: #F4F4F5;
@@ -44,6 +47,10 @@ body {
   min-height: calc(100% - 92px);
 }
 
+.d-none {
+  display: none;
+}
+
 .p-datatable button.editRow::before {
   content: "";
   background-image: url("../images/content/edit-2.svg");
@@ -53,15 +60,23 @@ body {
   border-bottom: 1px solid var(--divider);
   padding-bottom: 1rem;
   margin-bottom: -0.5rem;
-}
-#editModal-content form .inputWrapper {
-  margin-top: 1.5rem;
+  margin-top: 0;
 }
 #editModal-content form .inputSplit {
   margin-top: 1.5rem;
 }
 #editModal-content form .inputSplit .inputWrapper {
   margin-top: 0;
+}
+
+#settingsForm > div > fieldset:not(:last-of-type) {
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--default-500);
+  margin-bottom: 1rem;
+}
+#settingsForm .inputWrapper.inline label {
+  flex-grow: 1;
+  flex-shrink: 0;
 }
 
 /*# sourceMappingURL=style.css.map */
