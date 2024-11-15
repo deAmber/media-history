@@ -431,6 +431,37 @@ button:not(.tab), .button {
   }
 }
 
+.chip {
+  padding: 0 $unit-1;
+  height: 1.5rem;
+  border-radius: $rounded-small;
+  font-size: $font-size-tiny;
+  line-height: $line-height-tiny;
+  background-color: var(--default);
+  color: var(--foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  &.primary {
+    background-color: var(--primary);
+  }
+  &.secondary {
+    background-color: var(--secondary);
+  }
+  &.success {
+    background-color: var(--success);
+    color: var(--content1);
+  }
+  &.warning {
+    background-color: var(--warning);
+    color: var(--content1);
+  }
+  &.danger {
+    background-color: var(--danger);
+    color: var(--content1);
+  }
+}
+
 //Modal
 .react-micro-modal--portal {
   &.open::before {

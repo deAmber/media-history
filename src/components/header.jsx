@@ -31,7 +31,9 @@ const Header = () => {
         }
         //Rating Descriptions
         //TODO: use this
-
+        Object.keys(data).filter(v => {return v.substring(0, 4) === 'name'}).forEach(v => {
+            newSettings.ratingDescriptions[parseInt(v.split('-')[1])] = data[v];
+        });
         //Table Columns
         Object.keys(settings.tableColumns).forEach(mediaType => {
             Object.keys(settings.tableColumns[mediaType]).forEach(key => {
@@ -47,6 +49,7 @@ const Header = () => {
     }
 //TODO: add reset to default button per fieldset
     //TODO add darkmode switch
+    //TODO: will need to recalculate new release stats if any of those settings change
     return (
         <div role={'heading'} className={'header'}>
             <h1>Media History</h1>

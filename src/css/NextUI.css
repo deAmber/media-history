@@ -419,6 +419,37 @@ button:not(.tab)::before, button:not(.tab)::after, .button::before, .button::aft
   flex-shrink: 0;
 }
 
+.chip {
+  padding: 0 0.25rem;
+  height: 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  background-color: var(--default);
+  color: var(--foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.chip.primary {
+  background-color: var(--primary);
+}
+.chip.secondary {
+  background-color: var(--secondary);
+}
+.chip.success {
+  background-color: var(--success);
+  color: var(--content1);
+}
+.chip.warning {
+  background-color: var(--warning);
+  color: var(--content1);
+}
+.chip.danger {
+  background-color: var(--danger);
+  color: var(--content1);
+}
+
 .react-micro-modal--portal.open::before {
   content: "";
   top: 0;

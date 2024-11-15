@@ -1,7 +1,7 @@
 import mainStore from "../stores/mainStore.js";
 import { updateFile } from "../utilities.js";
 import driveData from "../stores/driveData.js";
-import {useRef, useState} from "react";
+import { useRef, useState } from "react";
 import Select from "react-select";
 import Loader from "./loader.jsx";
 import CreatableSelect from "react-select/creatable";
@@ -200,7 +200,9 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
           const formData = Object.fromEntries(new FormData(document.getElementById('editForm')));
           console.log(formData)
           //Cleanup data types
-          formData.score = parseFloat(formData.score);
+          if (formData.score) {
+            formData.score = parseFloat(formData.score);
+          }
           addEntry(formData);
         }}>
           <div className={'inputWrapper required'}>
@@ -255,9 +257,9 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
               <input id={'dateWatched'} name={'dateWatched'} type={'date'} defaultValue={getNowDate()} required/>
             </div>
           </>}
-          <div className={'inputWrapper required suffixed'}>
+          <div className={`inputWrapper ${editType.value === 'movie' ? 'required' : ""} suffixed`}>
             <label htmlFor={'score'}>Score</label>
-            <input id={'score'} name={'score'} type={'number'} min={1} max={10} step={1} required
+            <input id={'score'} name={'score'} type={'number'} min={1} max={10} step={1} required={editType.value === 'movie'}
                    placeholder={'Rating out of 10'}/>
           </div>
           <div className={'inputWrapper'}>
