@@ -74,6 +74,9 @@ body {
 .p-datatable td .chip {
   vertical-align: bottom;
 }
+.p-datatable td .chip.score {
+  min-width: 1.5rem;
+}
 
 #editModal-content > .inputWrapper {
   border-bottom: 1px solid var(--divider);
@@ -85,6 +88,9 @@ body {
   margin-top: 1.5rem;
 }
 #editModal-content form .inputSplit .inputWrapper {
+  margin-top: 0;
+}
+#editModal-content.editing #editForm > .inputWrapper:first-of-type {
   margin-top: 0;
 }
 

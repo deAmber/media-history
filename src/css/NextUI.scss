@@ -462,6 +462,51 @@ button:not(.tab), .button {
   }
 }
 
+//Tooltip
+.react-tooltip {
+  background-color: var(--content1) !important;
+  color: var(--foreground) !important;
+  border-radius: $rounded-medium !important;
+  opacity: 1 !important;
+  padding: $unit-1 $unit-3 !important;
+  .react-tooltip-arrow {
+    background-color: var(--content1) !important;
+  }
+  &.primary {
+    background-color: var(--primary) !important;
+    .react-tooltip-arrow {
+      background-color: var(--primary) !important;
+    }
+  }
+  &.secondary {
+    background-color: var(--secondary) !important;
+    .react-tooltip-arrow {
+      background-color: var(--secondary) !important;
+    }
+  }
+  &.success {
+    background-color: var(--success) !important;
+    color: var(--content1) !important;
+    .react-tooltip-arrow {
+      background-color: var(--success) !important;
+    }
+  }
+  &.warning {
+    background-color: var(--warning) !important;
+    color: var(--content1) !important;
+    .react-tooltip-arrow {
+      background-color: var(--warning) !important;
+    }
+  }
+  &.danger {
+    background-color: var(--danger) !important;
+    color: var(--content1) !important;
+    .react-tooltip-arrow {
+      background-color: var(--danger) !important;
+    }
+  }
+}
+
 //Modal
 .react-micro-modal--portal {
   &.open::before {

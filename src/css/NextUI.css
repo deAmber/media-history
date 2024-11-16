@@ -450,6 +450,50 @@ button:not(.tab)::before, button:not(.tab)::after, .button::before, .button::aft
   color: var(--content1);
 }
 
+.react-tooltip {
+  background-color: var(--content1) !important;
+  color: var(--foreground) !important;
+  border-radius: 0.75rem !important;
+  opacity: 1 !important;
+  padding: 0.25rem 0.75rem !important;
+}
+.react-tooltip .react-tooltip-arrow {
+  background-color: var(--content1) !important;
+}
+.react-tooltip.primary {
+  background-color: var(--primary) !important;
+}
+.react-tooltip.primary .react-tooltip-arrow {
+  background-color: var(--primary) !important;
+}
+.react-tooltip.secondary {
+  background-color: var(--secondary) !important;
+}
+.react-tooltip.secondary .react-tooltip-arrow {
+  background-color: var(--secondary) !important;
+}
+.react-tooltip.success {
+  background-color: var(--success) !important;
+  color: var(--content1) !important;
+}
+.react-tooltip.success .react-tooltip-arrow {
+  background-color: var(--success) !important;
+}
+.react-tooltip.warning {
+  background-color: var(--warning) !important;
+  color: var(--content1) !important;
+}
+.react-tooltip.warning .react-tooltip-arrow {
+  background-color: var(--warning) !important;
+}
+.react-tooltip.danger {
+  background-color: var(--danger) !important;
+  color: var(--content1) !important;
+}
+.react-tooltip.danger .react-tooltip-arrow {
+  background-color: var(--danger) !important;
+}
+
 .react-micro-modal--portal.open::before {
   content: "";
   top: 0;

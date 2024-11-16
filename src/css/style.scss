@@ -76,8 +76,13 @@ body {
     content: "";
     background-image: url("../images/essential/more-circle.svg");
   }
-  td .chip {
-    vertical-align: bottom;
+  td {
+    .chip {
+      vertical-align: bottom;
+      &.score {
+        min-width: $unit-6;
+      }
+    }
   }
 }
 #editModal-content {
@@ -94,6 +99,9 @@ body {
         margin-top: 0;
       }
     }
+  }
+  &.editing #editForm > .inputWrapper:first-of-type {
+    margin-top: 0;
   }
 }
 

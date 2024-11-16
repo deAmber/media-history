@@ -3,8 +3,8 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import driveData from "../stores/driveData.js";
 import mainStore from "../stores/mainStore.js";
-import MicroModal from "react-micro-modal";
-import Loader from "../components/loader.jsx";
+import { Tooltip } from 'react-tooltip';
+import ViewModal, { calcNewRelease } from "../components/viewModal.jsx";
 
 /**
  * Renders a Datatable showing core columns for the selected data type and year.
@@ -15,7 +15,6 @@ const ViewTable = ({}) => {
   const { movies, shows, games, books, settings } = driveData();
   const [ rowData, setRowData ] = useState(movies[year.value]);
   const [ modalOpen, setModalOpen ] = useState(false);
-  const [ editing, setEditing ] = useState(false);
 
   //Updates the row date when the data changes (e.g. editing or adding an entry).
   useEffect(() => {
@@ -53,17 +52,6 @@ const ViewTable = ({}) => {
     return formattedDate.toLocaleDateString();
   }
 
-  const calcNewRelease = (release, watch) => {
-    release = new Date(release);
-    watch = new Date(watch);
-    let monthDiff = watch.getMonth() - release.getMonth();
-    const dayDiff = watch.getDay() - release.getDay();
-    if (dayDiff < 0) {
-      monthDiff = monthDiff - 1;
-    }
-    return monthDiff <= settings.newRelease[type.value]
-  }
-
   /**
    * Formats a date, but also checks for recent release and adds a chip if it's within that range.
    * @param {Object} row - Row date.
@@ -75,7 +63,10 @@ const ViewTable = ({}) => {
     if (!raw) {
       return '-';
     }
-    return <>{formatDate(row, column)}  {calcNewRelease(row['release'], raw) && <span className="chip success">New</span>}</>
+    return <>
+      {formatDate(row, column)}  {calcNewRelease(row['release'], raw, type, settings) && <span className="chip success" data-tooltip-id={'tooltip-new'} data-tooltip-content={"New release"}>New</span>}
+      <Tooltip id={'tooltip-new'} className={'success'}/>
+    </>
   }
 
   /**
@@ -89,6 +80,13 @@ const ViewTable = ({}) => {
     if (!raw) {
       return '-';
     }
+    if (column.field === 'score') {
+      const colour = (raw >= 7 ? "success" : raw >= 3 ? "warning" : "danger");
+      return <>
+        <span className={`chip score ${colour}`} data-tooltip-id={`tooltip-score-${parseInt(raw)}`} data-tooltip-content={settings.ratingDescriptions[parseInt(raw)-1]}>{raw}</span>
+        <Tooltip id={`tooltip-score-${parseInt(raw)}`} className={colour}/>
+      </>
+    }
     return raw;
   }
 
@@ -97,71 +95,9 @@ const ViewTable = ({}) => {
     return settings.tableColumns[type.value][column]
   }
 
-  /**
-   * Micromodal view entry content
-   * @param handleClose - close modal function
-   * @returns {JSX.Element}
-   */
-  const viewModal = (handleClose) => {
-    console.log(modalOpen)
-
-    return <>
-      {/*{saving && <Loader message={`Saving new settings, please wait...`}/>}*/}
-      <div className={'title'}>
-        <h2>{modalOpen.title}</h2>
-      </div>
-      <div className={'content'} id={'viewEntryModal'}>
-        <div><span className={'field'}>Date Released</span><span
-          className={'value'}>{new Date(modalOpen.release).toLocaleDateString()}</span></div>
-        {type.value === 'book' && <>
-          {modalOpen.author && <div><span className={'field'}>Author</span><span className={'value'}>{modalOpen.author}</span></div>}
-          {modalOpen.series && <div><span className={'field'}>Series</span><span className={'value'}>{modalOpen.series}</span></div>}
-          {modalOpen.seriesNo && <div><span className={'field'}>Series Number</span><span className={'value'}>{modalOpen.seriesNo}</span></div>}
-        </>}
-        {type.value === 'movie' && <div><span className={'field'}>Date Watched</span><span className={'value'}>{new Date(modalOpen.dateWatched).toLocaleDateString()} {calcNewRelease(modalOpen.release, modalOpen.dateWatched) && <span className="chip success">New</span>}</span></div>}
-        {type.value !== 'movie' && <>
-          {modalOpen.started && <div><span className={'field'}>Date Started</span><span className={'value'}>{new Date(modalOpen.started).toLocaleDateString()}{calcNewRelease(modalOpen.release, modalOpen.started) && <span className="chip success">New</span>}</span></div>}
-          {modalOpen.finished && <div><span className={'field'}>Date Started</span><span className={'value'}>{new Date(modalOpen.finished).toLocaleDateString()}</span></div>}
-          {(modalOpen.started && modalOpen.finished) && <div><span className={'field'}>Days to {type.value === 'book' ? 'read' : (type.value === 'game' ? 'play' : 'watch')}</span><span className={'value'}>{Math.floor(Math.abs(new Date(modalOpen.finished) - new Date(modalOpen.started)) / (1000 * 60 * 60 * 24)) + 1}</span></div>}
-        </>}
-        {modalOpen.score && <div><span className={'field'}>Score</span><span className={'value'}>{modalOpen.score}/10</span></div>}
-        {modalOpen.thoughts && <div><span className={'field'}>{settings.columnNames.shortDesc}</span><span className={'value'}>{modalOpen.thoughts}</span></div>}
-        {modalOpen.review && <div><span className={'field'}>{settings.columnNames.longDesc}</span><span className={'value'}>{modalOpen.review}</span></div>}
-        {type.value === 'movie' && <>
-          {modalOpen.location && <div><span className={'field'}>Location</span><span className={'value'}>{modalOpen.location}</span></div>}
-          {(modalOpen.cost || modalOpen.cost === 0) && <div><span className={'field'}>Cost</span><span className={'value'}>{modalOpen.cost === 0 ? "$0.00" : `$${modalOpen.cost.toFixed(2)}`}</span></div>}
-          {modalOpen.persons && <div><span className={'field'}>Seen with</span><span className={'value'}>{modalOpen.persons.join(", ")}</span></div>}
-        </>}
-        {type.value === 'tv' && <>
-          {modalOpen.seasons && <div><span className={'field'}>Seasons</span><span className={'value'}>{modalOpen.seasons}</span></div>}
-          {modalOpen.episodes && <div><span className={'field'}>Episodes</span><span className={'value'}>{modalOpen.episodes}</span></div>}
-        </>}
-        {type.value === 'game' && <>
-          {modalOpen.consoles && <div><span className={'field'}>Console</span><span className={'value'}>{modalOpen.consoles}</span></div>}
-          {modalOpen.achievementsGained && <div><span className={'field'}>Achievements Gained</span><span className={'value'}>{modalOpen.achievementsGained}</span></div>}
-          {modalOpen.achievementsTotal && <div><span className={'field'}>Achievements Total</span><span className={'value'}>{modalOpen.achievementsTotal}</span></div>}
-          {(modalOpen.achievementsTotal) && <div><span className={'field'}>Achievement Percentage</span><span className={'value'}>{!modalOpen.achievementsGained ? "0" : (modalOpen.achievementsTotal / modalOpen.achievementsGained) * 100}%</span></div>}
-          </>}
-        {type.value === 'book' && <>
-          {modalOpen.pages && <div><span className={'field'}>Pages</span><span className={'value'}>{modalOpen.pages}</span></div>}
-          {modalOpen.words && <div><span className={'field'}>Words</span><span className={'value'}>{modalOpen.words}</span></div>}
-          {modalOpen.format && <div><span className={'field'}>Format</span><span className={'value'}>{modalOpen.format}</span></div>}
-          {modalOpen.type && <div><span className={'field'}>Type</span><span className={'value'}>{modalOpen.type}</span></div>}
-        </>}
-        {(type.value !== 'book' && modalOpen.time) && <div><span className={'field'}>Total {type.value === 'game' ? "Playtime" : "Runtime"}</span><span className={'value'}>{modalOpen.time}</span></div>}
-        {modalOpen.notes && <div><span className={'field'}>Notes</span><span className={'value'}>{modalOpen.notes}</span></div>}
-      </div>
-      <div className={'footer'}>
-        <button onClick={handleClose} className={'secondary'}>Edit</button>
-        <button onClick={handleClose} className={'primary'}>Close</button>
-      </div>
-    </>
-  }
-
   //TODO: action column with view more and edit buttons
   //TODO: filtering?
   //TODO: smart up sorting of watchtime column
-  //TODO: tooltip or modal score
   return <>
     <DataTable value={rowData} sortField={type.value === 'movie' ? 'dateWatched' : 'started'} emptyMessage={`No ${type.label} found for ${year.label}`}>
       <Column field={'title'} header={"Title"} sortable frozen/>
@@ -206,8 +142,8 @@ const ViewTable = ({}) => {
       {checkColVis('notes') && <Column field={'notes'} header={'Notes'} body={handleEmptyCell}/>}
       <Column header={'View'} body={(v) => {return <button className={'view iconOnly primary'} onClick={() => {setModalOpen(v)}} title={`View ${v.title}`}/>}}/>
     </DataTable>
-    <MicroModal open={modalOpen !== false} handleClose={() => {setModalOpen(false)}} closeOnOverlayClick={!editing}
-                children={viewModal}/>
+    <ViewModal open={modalOpen !== false} handleClose={() => {setModalOpen(false)}}
+               data={modalOpen} type={type}/>
   </>
 }
 

@@ -4,24 +4,32 @@ import driveData from "../stores/driveData.js";
 import { useRef, useState } from "react";
 import Select from "react-select";
 import Loader from "./loader.jsx";
-import CreatableSelect from "react-select/creatable";
+import InputGroup, {InputCreateSelectGroup} from "./formElements/inputGroups.jsx";
 
+/**
+ * Contents of an add or edit modal - to add or edit a media entry.
+ * @param {Object|false} data - Data for media entry.
+ * @param {Function} closeButton - Function to close parent modal.
+ * @param {Object} forceEditType - Media type open.
+ * @returns {JSX.Element}
+ */
 const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => {
   const { type, setUpdateFlag } = mainStore();
   const { meta, setMeta , movies, setMovies, shows, setShows, games, setGames, books, setBooks, settings } = driveData();
   const [ editType, setEditType ] = useState(forceEditType || type)
   const [ saving, setSaving ] = useState(false);
-  const [ people, setPeople ] = useState(null);
-  const [ consoles, setConsoles ] = useState(null);
-  const [ author, setAuthor ] = useState(null);
-  const [ bookSeries, setBookSeries ] = useState(null);
+  const [ people, setPeople ] = useState(data?.persons ? data.persons.map(v => {return {label: v, value: v}}) : null);
+  const [ consoles, setConsoles ] = useState(data?.consoles ? {label: data.consoles, value: data.consoles} : null);
+  const [ author, setAuthor ] = useState(data?.author ? {label: data.author, value: data.author} : null);
+  const [ bookSeries, setBookSeries ] = useState(data?.series ? {label: data.series, value: data.series} : null);
   const formRef = useRef();
 
-  const getNowDate = () => {
-    const now = new Date();
+  const getNowDate = (now = new Date()) => {
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     return now.toJSON().slice(0,10)+"";
   }
+
+  console.log(data)
 
   /**
    * Handles inserting the new entry into the array.
@@ -53,14 +61,18 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
   }
 
   /**
-   * Process and formats any needed data, and then updates the Zustand store and data file.
+   * Processes the raw form data into the supported format
    * @param {Object} data - Form Data.
    */
-  const addEntry = (data) => {
+  const processData = (data) => {
     //TODO: ranking + updating all other entries with a higher rank
     const year = parseInt(data[editType.value === 'movie' ? 'dateWatched' : 'started'].split('-')[0]);
     let updateMeta = false;
     let tempMeta = meta;
+    //Score
+    if (data.score) {
+      data.score = parseFloat(data.score);
+    }
     //Add year to support years list
     if (meta['years'].indexOf(year) === -1) {
       tempMeta['years'].push(year);
@@ -104,25 +116,9 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
       } else {
         data.cost = null;
       }
-      //Add entry to movie file
-      let temp = handleDataInsert(movies, year, 'dateWatched', data);
-      setMovies(temp);
-      setUpdateFlag();
-      updateFile(meta.fileIds.movies, movies).then(() => {
-        setSaving(false);
-        closeButton();
-      });
     } else if (editType.value === 'tv') {
       //TODO: Handling multiple seasons (i.e. 1-3)
       data.episodes = parseInt(data.episodes);
-      //Add entry to TV file
-      let temp = handleDataInsert(shows, year, 'started', data);
-      setShows(temp);
-      setUpdateFlag();
-      updateFile(meta.fileIds.tv, shows).then(() => {
-        setSaving(false);
-        closeButton();
-      });
     } else if (editType.value === 'game') {
       //Add console to meta list
       if (consoles) {
@@ -134,14 +130,6 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
       } else {
         data.consoles = false;
       }
-      //Add entry to Game file
-      let temp = handleDataInsert(games, year, 'started', data);
-      setGames(temp);
-      setUpdateFlag();
-      updateFile(meta.fileIds.game, games).then(() => {
-        setSaving(false);
-        closeButton();
-      });
     } else if (editType.value === 'book') {
       //Add author
       data.author = author.label;
@@ -161,11 +149,60 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
         data.seriesNo = null;
       }
       //TODO: progress updates
+    }
+    return {processedData: data, updateMeta: updateMeta, year: year, tempMeta: tempMeta}
+  }
+
+  /**
+   * Event listener for form submit - process data and handle add/update.
+   * @param e
+   */
+  const formSubmit = (e) => {
+    //dont reload
+    e.preventDefault();
+    setSaving(true);
+    const formData = Object.fromEntries(new FormData(document.getElementById('editForm')));
+    console.log(formData)
+    //Cleanup data types
+    const { processedData, updateMeta, year, tempMeta } = processData(formData);
+    //Editing existing entry - re-calc stats and remove original
+    if (data) {
+
+    }
+    //Update date in Zustand store
+    if (editType.value === 'movie') {
+      //Add entry to movie file
+      let temp = handleDataInsert(movies, year, 'dateWatched', processedData);
+      setMovies(temp);
+      setUpdateFlag();
+      updateFile(meta.fileIds.movies, temp).then(() => {
+        setSaving(false);
+        closeButton();
+      });
+    } else if (editType.value === 'tv') {
+      //Add entry to TV file
+      let temp = handleDataInsert(shows, year, 'started', processedData);
+      setShows(temp);
+      setUpdateFlag();
+      updateFile(meta.fileIds.tv, temp).then(() => {
+        setSaving(false);
+        closeButton();
+      });
+    } else if (editType.value === 'game') {
       //Add entry to Game file
-      let temp = handleDataInsert(books, year, 'started', data);
+      let temp = handleDataInsert(games, year, 'started', processedData);
+      setGames(temp);
+      setUpdateFlag();
+      updateFile(meta.fileIds.game, temp).then(() => {
+        setSaving(false);
+        closeButton();
+      });
+    } else if (editType.value === 'book') {
+      //Add entry to Game file
+      let temp = handleDataInsert(books, year, 'started', processedData);
       setBooks(temp);
       setUpdateFlag();
-      updateFile(meta.fileIds.book, books).then(() => {
+      updateFile(meta.fileIds.book, temp).then(() => {
         setSaving(false);
         closeButton();
       });
@@ -181,10 +218,10 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
     <>
       {saving && <Loader message={`Saving new ${editType.label.substring(0, editType.label.length-1)}, please wait...`}/>}
       <div className={'title'}>
-        <h2>{data ? 'Edit <name>' : "Add new media"}</h2>
+        <h2>{data ? `Edit ${data.title}` : "Add new media"}</h2>
       </div>
-      <div className={'content'} id={'editModal-content'}>
-        <div className={'inputWrapper required'}>
+      <div className={`content ${data ? "editing" : ""}`} id={'editModal-content'}>
+        {!data && <div className={'inputWrapper required'}>
           <label>Media type</label>
           {!data && <Select unstyled classNamePrefix={'react-select'} options={[
             {value: "movie", label: "Movies"},
@@ -192,114 +229,56 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
             {value: "game", label: "Video Games"},
             {value: "book", label: "Books"},
           ]} value={editType} onChange={setEditType}/>}
-        </div>
-        <form id={'editForm'} ref={formRef} onSubmit={(e) => {
-          //dont reload
-          e.preventDefault();
-          setSaving(true);
-          const formData = Object.fromEntries(new FormData(document.getElementById('editForm')));
-          console.log(formData)
-          //Cleanup data types
-          if (formData.score) {
-            formData.score = parseFloat(formData.score);
-          }
-          addEntry(formData);
-        }}>
-          <div className={'inputWrapper required'}>
-            <label htmlFor={'title'}>{editType.label.substring(0, editType.label.length - 1)} Title</label>
-            <input id={'title'} name={'title'} type={'text'} required/>
-          </div>
-          <div className={'inputWrapper required'}>
-            <label htmlFor={'release'}>Release Date</label>
-            <input id={'release'} name={'release'} type={'date'} defaultValue={getNowDate()} required/>
-          </div>
+        </div>}
+        <form id={'editForm'} ref={formRef} onSubmit={formSubmit}>
+          <InputGroup required id={'title'} title={`${editType.label.substring(0, editType.label.length - 1)} Title`} type={"text"} defaultValue={data?.title || null}/>
+          <InputGroup required id={'release'} title={'Release Data'} type={'date'} defaultValue={data ? getNowDate(new Date(data.release)) : getNowDate()}/>
           {editType.value === 'book' && <>
-            <div className={'inputWrapper required'}>
-              <label htmlFor={'author'}>Author</label>
-              <CreatableSelect id={'author'} options={meta.authors.map(v => {
-                return {value: v, label: v}
-              })}
-                value={author} onChange={setAuthor}
-                menuPortalTarget={document.body}
-                unstyled classNamePrefix={'react-select'} required/>
-            </div>
+            <InputCreateSelectGroup id={'author'} title={'Author'} required
+                                    value={author} setValue={setAuthor} options={meta.authors}/>
             <fieldset className={'inputSplit'}>
               <legend>Series</legend>
-              <div className={'inputWrapper'}>
-                <label htmlFor={'series'}>Series</label>
-                <CreatableSelect id={'series'} options={meta.bookSeries.map(v => {
-                  return {value: v, label: v}
-                })}
-                  value={bookSeries} onChange={setBookSeries}
-                  menuPortalTarget={document.body}
-                  unstyled classNamePrefix={'react-select'} isClearable/>
-              </div>
-              <div className={'inputWrapper'}>
-                <label htmlFor={'seriesNo'}>Number</label>
-                <input id={'seriesNo'} name={'seriesNo'} type={'number'} min={0}/>
-              </div>
+              <InputCreateSelectGroup id={'series'} title={'Series'} value={bookSeries}
+                                      options={meta.bookSeries} isClearable setValue={setBookSeries}/>
+              <InputGroup id={'seriesNo'} title={'Number'} type={'number'} min={0} defaultValue={data.seriesNo ? data.seriesNo : null}/>
             </fieldset>
           </>}
           {editType.value !== 'movie' && <fieldset className={'inputSplit'}>
             <legend>Timeline</legend>
-            <div className={'inputWrapper required'}>
-              <label htmlFor={'started'}>Date Started</label>
-              <input id={'started'} name={'started'} type={'date'} defaultValue={getNowDate()} required/>
-            </div>
-            <div className={'inputWrapper'}>
-              <label htmlFor={'finished'}>Date Finished</label>
-              <input id={'finished'} name={'finished'} type={'date'}/>
-            </div>
+            <InputGroup required id={'started'} title={'Date Started'} type={'date'} defaultValue={data ? getNowDate(new Date(data.started)) : getNowDate()}/>
+            <InputGroup id={'finished'} title={'Date Finished'} type={'date'} defaultValue={data ? getNowDate(new Date(data.finished)) : null}/>
           </fieldset>}
-          {editType.value === 'movie' && <>
-            <div className={'inputWrapper required'}>
-              <label htmlFor={'dateWatched'}>Date Watched</label>
-              <input id={'dateWatched'} name={'dateWatched'} type={'date'} defaultValue={getNowDate()} required/>
-            </div>
-          </>}
-          <div className={`inputWrapper ${editType.value === 'movie' ? 'required' : ""} suffixed`}>
-            <label htmlFor={'score'}>Score</label>
-            <input id={'score'} name={'score'} type={'number'} min={1} max={10} step={1} required={editType.value === 'movie'}
-                   placeholder={'Rating out of 10'}/>
-          </div>
+          {editType.value === 'movie' && <InputGroup required id={'dateWatched'} title={'Date Watched'} type={'date'} defaultValue={data ? getNowDate(new Date(data.dateWatched)) : getNowDate()}/>}
+          <InputGroup required={editType.value === 'movie'} wrapperClass={'suffixed'} title={'Score'} id={'score'}
+                      type={'number'} min={1} max={10} step={1} placeholder={'Rating out of 10'} defaultValue={data?.score ? data.score : null}/>
           <div className={'inputWrapper'}>
             <label htmlFor={'thoughts'}>{settings.columnNames.shortDesc}</label>
-            <textarea id={'thoughts'} name={'thoughts'} rows={2}
+            <textarea id={'thoughts'} name={'thoughts'} rows={2} defaultValue={data?.thoughts ? data.thoughts : null}
                       placeholder={'Spoiler free thoughts, notes or impressions.'}/>
           </div>
           <div className={'inputWrapper'}>
             <label htmlFor={'review'}>{settings.columnNames.longDesc}</label>
-            <textarea id={'review'} name={'review'} rows={5}
+            <textarea id={'review'} name={'review'} rows={5} defaultValue={data?.review ? data.review : null}
                       placeholder={'Detailed opinions, praise, and criticisms.'}/>
           </div>
           {editType.value === 'movie' && <>
             <div className={'inputWrapper'}>
               <label htmlFor={'location'}>Location Seen</label>
               <input id={'location'} name={'location'} type={'text'} list={'locations'}
-                     placeholder={'Name of Cinema, a persons house, your phone...'}/>
+                     placeholder={'Name of Cinema, a persons house, your phone...'} defaultValue={data?.location ? data.location : null}/>
               <datalist id={'locations'}>
                 {meta.cinemas.map((v, i) => {
                   return (<option key={i} label={v}>{v}</option>)
                 })}
               </datalist>
             </div>
-            <div className={'inputWrapper prefixed'}>
-              <label htmlFor={'cost'}>Cost</label>
-              <input id={'cost'} name={'cost'} type={'number'} min={0} step={0.01} defaultValue={0.00}/>
-            </div>
-            <div className={'inputWrapper'}>
-              <label htmlFor={'seenWith'}>Seen with</label>
-              <CreatableSelect id={'seenWith'} isMulti options={meta.people.map(v => {
-                return {value: v, label: v}
-              })}
-                               value={people} onChange={setPeople}
-                               menuPortalTarget={document.body} placeholder={'Anyone you watched the movie with'}
-                               unstyled classNamePrefix={'react-select'} classNames={{
-                multiValue: () => {
-                  return 'chip'
-                }
-              }}/>
-            </div>
+            <InputGroup wrapperClass={'prefixed'} id={'cost'} title={'Cost'} type={'number'} min={0} step={0.01} defaultValue={data?.cost ? data.cost : 0.00}/>
+            <InputCreateSelectGroup id={'seenWith'} title={'Seen with'} options={meta.people} value={people} setValue={setPeople}
+                                    isMulti={true} placeholder={'Anyone you watched the movie with'} classNames={{
+                                      multiValue: () => {
+                                        return 'chip'
+                                      }
+                                    }}/>
           </>}
           {editType.value === 'tv' && <fieldset className={'inputSplit'}>
             <legend>Show Length</legend>
@@ -307,52 +286,30 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
               <label htmlFor={'seasons'}>Seasons</label>
               <input id={'seasons'} name={'seasons'} type={'text'} required/>
             </div>
-            <div className={'inputWrapper required'}>
-              <label htmlFor={'episodes'}>Total Episodes</label>
-              <input id={'episodes'} name={'episodes'} type={'number'} step={1} min={0} required/>
-            </div>
+            <InputGroup id={'episodes'} title={'Total Episodes'} type={'number'} step={1} min={0} required defaultValue={data?.episodes ? data.episodes : null}/>
           </fieldset>}
           {editType.value === 'game' && <>
-            <div className={'inputWrapper'}>
-              <label htmlFor={'console'}>Console</label>
-              <CreatableSelect id={'console'} options={meta.consoles.map(v => {
-                return {value: v, label: v}
-              })}
-                 value={consoles} onChange={setConsoles}
-                 menuPortalTarget={document.body} placeholder={'PC, PS5, XBox One...'}
-                 unstyled classNamePrefix={'react-select'} isClearable/>
-            </div>
+            <InputCreateSelectGroup id={'console'} title={'Console'} options={meta.consoles}
+                                    value={consoles} setValue={setConsoles} placeholder={'PC, PS5, XBox One...'} isClearable/>
             <fieldset className={'inputSplit'}>
               <legend>Achievements</legend>
-              <div className={'inputWrapper required'}>
-                <label htmlFor={'achievementsGained'}>Gained</label>
-                <input id={'achievementsGained'} name={'achievementsGained'} type={'number'} min={0} defaultValue={0}
-                       step={1} required/>
-              </div>
-              <div className={'inputWrapper required'}>
-                <label htmlFor={'achievementsTotal'}>Possible</label>
-                <input id={'achievementsTotal'} name={'achievementsTotal'} type={'number'} step={1} min={0}
-                       defaultValue={0} required/>
-              </div>
+              <InputGroup required id={'achievementsGained'} title={'Gained'} type={'number'} min={0}
+                          defaultValue={data?.achievementsGained ? data.achievementsGained : 0} step={1}/>
+              <InputGroup required id={'achievementsTotal'} title={'Possible'} type={'number'} step={1} min={0}
+                          defaultValue={data?.achievementsTotal ? data.achievementsTotal : 0}/>
             </fieldset>
           </>}
           {editType.value === 'book' && <>
             <fieldset className={'inputSplit'}>
               <legend>Length</legend>
-              <div className={'inputWrapper'}>
-                <label htmlFor={'pages'}>Pages</label>
-                <input id={'pages'} name={'pages'} type={'number'} min={0} step={1}/>
-              </div>
-              <div className={'inputWrapper'}>
-                <label htmlFor={'words'}>Words</label>
-                <input id={'words'} name={'words'} type={'number'} min={0} step={1}/>
-              </div>
+              <InputGroup id={'pages'} title={'Pages'} type={'number'} min={0} step={1} defaultValue={data?.pages ? data.pages : null}/>
+              <InputGroup id={'words'} title={'Words'} type={'number'} min={0} step={1} defaultValue={data?.words ? data.words : null}/>
             </fieldset>
             <fieldset className={'inputSplit'}>
               <legend>Media</legend>
               <div className={'inputWrapper'}>
                 <label htmlFor={'format'}>Format</label>
-                <select id={'format'} name={'format'} defaultValue={'Physical'}>
+                <select id={'format'} name={'format'} defaultValue={data?.format ? data.format : 'Physical'}>
                   <option value={'Physical'}>Physical</option>
                   <option value={'eBook'}>eBook</option>
                   <option value={'Audio'}>Audio</option>
@@ -360,7 +317,7 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
               </div>
               <div className={'inputWrapper'}>
                 <label htmlFor={'type'}>Type</label>
-                <select id={'type'} name={'type'} defaultValue={'Novel'}>
+                <select id={'type'} name={'type'} defaultValue={data?.type ? data.type : 'Novel'}>
                   <option value={'Novel'}>Novel</option>
                   <option value={'Novella'}>Novella</option>
                   <option value={'Comic'}>Comic</option>
@@ -371,19 +328,10 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
           </>}
           {editType.value !== 'book' && <fieldset className={'inputSplit'}>
             <legend>Total {editType.value === 'game' ? "Playtime" : "Runtime"}</legend>
-            <div className={'inputWrapper'}>
-              <label htmlFor={'hours'}>Hours</label>
-              <input id={'hours'} name={'hours'} type={'number'} min={0} step={1}/>
-            </div>
-            <div className={'inputWrapper required'}>
-              <label htmlFor={'minutes'}>Minutes</label>
-              <input id={'minutes'} name={'minutes'} type={'number'} min={0} step={1} required/>
-            </div>
+            <InputGroup id={'hours'} title={'Hours'} type={'number'} min={0} step={1} defaultValue={data.time ? data.time.split(":")[0] : null}/>
+            <InputGroup id={'minutes'} title={'Minutes'} required type={'number'} min={0} step={1} defaultValue={data.time ? data.time.split(":")[1] : null}/>
           </fieldset>}
-          <div className={'inputWrapper'}>
-            <label htmlFor={'notes'}>Notes</label>
-            <input id={'notes'} name={'notes'} type={'text'}/>
-          </div>
+          <InputGroup id={'notes'} title={'Notes'} type={"text"} defaultValue={data?.notes ? data.notes : null}/>
         </form>
       </div>
       <div className={'footer'}>
