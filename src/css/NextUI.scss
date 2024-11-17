@@ -561,6 +561,13 @@ button:not(.tab), .button {
       right: $unit-6;
       bottom: $unit-4;
     }
+    &.small {
+      padding-bottom: calc( #{$unit-4} + 56px ) !important;
+      height: auto !important;
+      .content {
+        height: auto;
+      }
+    }
   }
 }
 

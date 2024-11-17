@@ -4,7 +4,7 @@ import { Column } from 'primereact/column';
 import driveData from "../stores/driveData.js";
 import mainStore from "../stores/mainStore.js";
 import { Tooltip } from 'react-tooltip';
-import ViewModal, { calcNewRelease } from "../components/viewModal.jsx";
+import ViewModal from "../components/viewModal.jsx";
 
 /**
  * Renders a Datatable showing core columns for the selected data type and year.
@@ -13,24 +13,26 @@ import ViewModal, { calcNewRelease } from "../components/viewModal.jsx";
 const ViewTable = ({}) => {
   const { type, year, updateFlag } = mainStore();
   const { movies, shows, games, books, settings } = driveData();
-  const [ rowData, setRowData ] = useState(movies[year.value]);
+  const [ rowData, setRowData ] = useState(movies?.[year?.value]);
   const [ modalOpen, setModalOpen ] = useState(false);
 
   //Updates the row date when the data changes (e.g. editing or adding an entry).
   useEffect(() => {
-    switch (type.value) {
-      case 'book':
-        setRowData(books[year.value]);
-        break;
-      case 'game':
-        setRowData(games[year.value]);
-        break;
-      case 'tv':
-        setRowData(shows[year.value]);
-        break;
-      case 'movie':
-      default:
-        setRowData(movies[year.value]);
+    if (year?.value) {
+      switch (type.value) {
+        case 'book':
+          setRowData(books[year.value]);
+          break;
+        case 'game':
+          setRowData(games[year.value]);
+          break;
+        case 'tv':
+          setRowData(shows[year.value]);
+          break;
+        case 'movie':
+        default:
+          setRowData(movies[year.value]);
+      }
     }
   }, [movies, year, shows, games, books, type, updateFlag]);
 
@@ -64,7 +66,7 @@ const ViewTable = ({}) => {
       return '-';
     }
     return <>
-      {formatDate(row, column)}  {calcNewRelease(row['release'], raw, type, settings) && <span className="chip success" data-tooltip-id={'tooltip-new'} data-tooltip-content={"New release"}>New</span>}
+      {formatDate(row, column)}  {row['newRelease'] && <span className="chip success" data-tooltip-id={'tooltip-new'} data-tooltip-content={"New release"}>New</span>}
       <Tooltip id={'tooltip-new'} className={'success'}/>
     </>
   }
@@ -93,6 +95,11 @@ const ViewTable = ({}) => {
   //Gets the column visibility from settings
   const checkColVis = (column) => {
     return settings.tableColumns[type.value][column]
+  }
+
+  //New user with no data
+  if (!year) {
+    return <></>
   }
 
   //TODO: action column with view more and edit buttons

@@ -547,6 +547,13 @@ button:not(.tab)::before, button:not(.tab)::after, .button::before, .button::aft
   right: 1.5rem;
   bottom: 1rem;
 }
+.react-micro-modal--portal [role=dialog].small {
+  padding-bottom: calc(1rem + 56px) !important;
+  height: auto !important;
+}
+.react-micro-modal--portal [role=dialog].small .content {
+  height: auto;
+}
 
 .p-datatable {
   padding: 1rem;

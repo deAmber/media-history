@@ -2,8 +2,11 @@ import { useEffect, useState } from 'react';
 import { gapi } from 'gapi-script';
 import mainStore from "../stores/mainStore.js";
 import driveData from "../stores/driveData.js";
+import {statDefaults} from "../utilities.js";
 
 const ClientId = "803994679308-qk0cpk827asnvoshdtegmuiq5igl8rbc.apps.googleusercontent.com";
+
+//TODO: recreate media files for each app version update so that needed keys are always present.
 
 const Login = () => {
   const { setUser, setYear, setLoaded, setType } = mainStore();
@@ -97,7 +100,21 @@ const Login = () => {
     },
     {
       name: 'metaData',
-      default: {'people': [], 'cinemas': [], 'years': [], 'authors': [], 'bookSeries': [], 'consoles': [], 'movies': {}, 'tv': {}, 'game': {}, 'book': {}},
+      default: {
+        'people': [], 'cinemas': [], 'years': [], 'authors': [], 'bookSeries': [], 'consoles': [], entryId: 0, appVersion: "1.0",
+        'movies': {
+          'overall': statDefaults['movie']
+        },
+        'tv': {
+          'overall': statDefaults['tv']
+        },
+        'game': {
+          'overall': statDefaults['game']
+        },
+        'book': {
+          'overall': statDefaults['book']
+        },
+      },
       store: setMeta
     },
     {
