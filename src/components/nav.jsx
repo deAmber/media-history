@@ -5,11 +5,10 @@ import MicroModal from "react-micro-modal";
 import mainStore from "../stores/mainStore.js";
 import driveData from "../stores/driveData.js";
 import Edit from "./edit.jsx";
-import { gapi } from "gapi-script";
 
 const Nav = () => {
   const location = useLocation();
-  const { type, setType, year, setYear, setUser, setLoaded } = mainStore();
+  const { type, setType, year, setYear } = mainStore();
   const { meta } = driveData();
   const [ addModal, setAddModal ] = useState(false);
 
@@ -24,14 +23,6 @@ const Nav = () => {
                   children={(handleClose) => <Edit closeButton={handleClose}/>}
                   closeOnOverlayClick={false}
       />
-      <button className={'tab'} onClick={() => {
-        gapi.auth2.getAuthInstance().signOut().then(() => {
-          localStorage.removeItem('isLoggedIn');
-          localStorage.removeItem('token');
-          setUser(false);
-          setLoaded(false);
-        });
-      }}>Log out</button>
       <Select options={[
         {value: "movie", label: "Movies"},
         {value: "tv", label: "TV Shows"},

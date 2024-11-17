@@ -75,7 +75,7 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
       delete data.minutes;
     }
     //Add new release flag
-    data.newRelease = calcNewRelease(data[editType.value === 'movie' ? 'dateWatched' : 'started'], data.release, editType, settings);
+    data.newRelease = calcNewRelease(data.release, data[editType.value === 'movie' ? 'dateWatched' : 'started'], editType, settings);
     //Update date in Zustand store
     if (editType.value === 'movie') {
       //Add seen with people
@@ -88,6 +88,8 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
           return v.label
         });
         tempMeta.people = existingPersons;
+      } else {
+        data.persons = [];
       }
       //Add Location to meta package
       if (data.location && !meta.cinemas.includes(data.location)) {

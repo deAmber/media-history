@@ -32,14 +32,20 @@ body {
   background-color: #002E62;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 1rem;
 }
 .header h1 {
+  margin-right: auto;
   color: #F4F4F5;
 }
 .header button.settings::before {
-  content: "";
   background-image: url("../images/essential/menu.svg");
+  content: "";
+}
+.header button.logout::before {
+  background-image: url("../images/arrows/logout.svg");
+  content: "";
 }
 
 #main {
@@ -102,6 +108,9 @@ body {
 #settingsForm .inputWrapper.inline label {
   flex-grow: 1;
   flex-shrink: 0;
+}
+#settingsForm .inputWrapper.required label::after {
+  display: none;
 }
 #settingsForm #generic-pane > .inputWrapper {
   padding-bottom: 1.5rem;

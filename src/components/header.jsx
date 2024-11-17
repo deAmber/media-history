@@ -5,9 +5,11 @@ import driveData from "../stores/driveData.js";
 import Switch from "./formElements/switch.jsx";
 import { updateFile } from "../utilities.js";
 import Loader from "./loader.jsx";
+import { gapi } from "gapi-script";
+import InputGroup from "./formElements/inputGroups.jsx";
 
 const Header = () => {
-    const { user } = mainStore()
+    const { user, setUser, setLoaded } = mainStore()
     const { settings, setSettings, meta } = driveData();
     const [ openSettings, setOpenSettings ] = useState();
     const [ openTab, setOpenTab ] = useState('generic');
@@ -53,14 +55,28 @@ const Header = () => {
     return (
         <div role={'heading'} className={'header'}>
             <h1>Media History</h1>
-            {user && <button className={'iconOnly primary sm settings'} title={'Open settings'} onClick={() => {setOpenSettings(true)}}/>}
-            <MicroModal open={openSettings} handleClose={() => {setOpenSettings(false)}}
-                closeOnOverlayClick={false} children={(handleClose) => {
-                    return <>
-                        {saving && <Loader message={`Saving new settings, please wait...`}/>}
-                        <div className={'title'}>
-                            <h2>Settings</h2>
-                        </div>
+            {user && <>
+                <button className={'iconOnly primary sm settings'} title={'Open settings'} onClick={() => {
+                    setOpenSettings(true)
+                }}/>
+                <button className={'iconOnly sm logout'} title={'Log out'} onClick={() => {
+                    gapi.auth2.getAuthInstance().signOut().then(() => {
+                        localStorage.removeItem('isLoggedIn');
+                        localStorage.removeItem('token');
+                        setUser(false);
+                        setLoaded(false);
+                    });
+                }}/>
+            </>}
+            <MicroModal open={openSettings} handleClose={() => {
+                setOpenSettings(false)
+            }}
+                        closeOnOverlayClick={false} children={(handleClose) => {
+                return <>
+                    {saving && <Loader message={`Saving new settings, please wait...`}/>}
+                    <div className={'title'}>
+                        <h2>Settings</h2>
+                    </div>
                         <div className={'content'}>
                             <div role={'tablist'} id={'tabNav'} className={'tabGroup'}>
                                 <button className={`tab ${openTab === 'generic' && 'active'}`} id={'generic'} aria-controls={'generic-pane'}
@@ -109,116 +125,47 @@ const Header = () => {
                                     </div>
                                     <fieldset>
                                     <legend>Alternative field names</legend>
-                                        <div className={'inputWrapper'}>
-                                            <label
-                                              htmlFor={'shortDesc'}>Short Thoughts</label>
-                                            <input id={'shortDesc'} name={'shortDesc'}
-                                                   defaultValue={settings.columnNames.shortDesc} type={'text'}
-                                                   required/>
-                                        </div>
-                                        <div className={'inputWrapper'}>
-                                            <label
-                                              htmlFor={'longDesc'}>Long Thoughts</label>
-                                            <input id={'longDesc'} name={'longDesc'}
-                                                   defaultValue={settings.columnNames.longDesc} type={'text'} required/>
-                                        </div>
+                                        <InputGroup id={'shortDesc'} title={'Short Thoughts'} required
+                                                    defaultValue={settings.columnNames.shortDesc} type={'text'}/>
+                                        <InputGroup id={'longDesc'} title={'Long Thoughts'} required
+                                                    defaultValue={settings.columnNames.longDesc} type={'text'}/>
                                     </fieldset>
                                     <fieldset>
                                         <legend>New release cutoff</legend>
-                                        <div className={'inputWrapper inline'}>
-                                            <label
-                                              htmlFor={'release-movie'}>Movies</label>
-                                            <input id={'release-movie'} name={'release-movie'}
-                                                   defaultValue={settings.newRelease.movie} type={'number'} min={0}
-                                                   required/>
-                                        </div>
-                                        <div className={'inputWrapper inline'}>
-                                            <label
-                                              htmlFor={'release-tv'}>TV Shows</label>
-                                            <input id={'release-tv'} name={'release-tv'}
-                                                   defaultValue={settings.newRelease.tv} type={'number'} min={0}
-                                                   required/>
-                                        </div>
-                                        <div className={'inputWrapper inline'}>
-                                            <label
-                                              htmlFor={'release-game'}>Video Games</label>
-                                            <input id={'release-game'} name={'release-game'}
-                                                   defaultValue={settings.newRelease.game} type={'number'} min={0}
-                                                   required/>
-                                        </div>
-                                        <div className={'inputWrapper inline'}>
-                                            <label
-                                              htmlFor={'release-book'}>Books</label>
-                                            <input id={'release-book'} name={'release-book'}
-                                                   defaultValue={settings.newRelease.book} type={'number'} min={0}
-                                                   required/>
-                                        </div>
+                                        <InputGroup wrapperClass={'inline'} id={'release-movie'} title={'Movies'}
+                                                    required defaultValue={settings.newRelease.movie} type={'number'} min={0}/>
+                                        <InputGroup wrapperClass={'inline'} id={'release-tv'} title={'TV Shows'}
+                                                    required defaultValue={settings.newRelease.tv} type={'number'} min={0}/>
+                                        <InputGroup wrapperClass={'inline'} id={'release-game'} title={'Video Games'}
+                                                    required defaultValue={settings.newRelease.game} type={'number'} min={0}/>
+                                        <InputGroup wrapperClass={'inline'} id={'release-book'} title={'Books'}
+                                                    required defaultValue={settings.newRelease.book} type={'number'} min={0}/>
                                     </fieldset>
                                 </div>
                                 <div id={'ratings-pane'} role={'tabpanel'} aria-labelledby={'ratings'}
                                      className={openTab !== 'ratings' ? 'd-none' : ''}>
                                     <fieldset>
                                         <legend>Name your scores</legend>
-                                        <div className={'inputWrapper inline'}>
-                                            <label
-                                              htmlFor={'name-0'}>1</label>
-                                            <input id={'name-0'} name={'name-0'}
-                                                   defaultValue={settings.ratingDescriptions[0]} type={'text'}
-                                                   required/>
-                                        </div>
-                                        <div className={'inputWrapper inline'}>
-                                            <label
-                                              htmlFor={'name-1'}>2</label>
-                                            <input id={'name-1'} name={'name-1'}
-                                                   defaultValue={settings.ratingDescriptions[1]} type={'text'}
-                                                   required/>
-                                        </div>
-                                        <div className={'inputWrapper inline'}>
-                                            <label
-                                              htmlFor={'name-2'}>3</label>
-                                            <input id={'name-2'} name={'name-2'}
-                                                   defaultValue={settings.ratingDescriptions[2]} type={'text'}
-                                                   required/>
-                                        </div>
-                                        <div className={'inputWrapper inline'}>
-                                            <label
-                                              htmlFor={'name-3'}>4</label>
-                                            <input id={'name-3'} name={'name-3'}
-                                                   defaultValue={settings.ratingDescriptions[3]} type={'text'}
-                                                   required/>
-                                        </div>
-                                        <div className={'inputWrapper inline'}>
-                                            <label
-                                              htmlFor={'name-4'}>5</label>
-                                            <input id={'name-4'} name={'name-4'}
-                                                   defaultValue={settings.ratingDescriptions[4]} type={'text'}
-                                                   required/>
-                                        </div>
-                                        <div className={'inputWrapper inline'}>
-                                            <label
-                                                htmlFor={'name-5'}>6</label>
-                                            <input id={'name-5'} name={'name-5'} defaultValue={settings.ratingDescriptions[5]} type={'text'} required/>
-                                        </div>
-                                        <div className={'inputWrapper inline'}>
-                                            <label
-                                                htmlFor={'name-6'}>7</label>
-                                            <input id={'name-6'} name={'name-6'} defaultValue={settings.ratingDescriptions[6]} type={'text'} required/>
-                                        </div>
-                                        <div className={'inputWrapper inline'}>
-                                            <label
-                                                htmlFor={'name-7'}>8</label>
-                                            <input id={'name-7'} name={'name-7'} defaultValue={settings.ratingDescriptions[7]} type={'text'} required/>
-                                        </div>
-                                        <div className={'inputWrapper inline'}>
-                                            <label
-                                                htmlFor={'name-8'}>9</label>
-                                            <input id={'name-8'} name={'name-8'} defaultValue={settings.ratingDescriptions[8]} type={'text'} required/>
-                                        </div>
-                                        <div className={'inputWrapper inline'}>
-                                            <label
-                                                htmlFor={'name-9'}>10</label>
-                                            <input id={'name-9'} name={'name-9'} defaultValue={settings.ratingDescriptions[9]} type={'text'} required/>
-                                        </div>
+                                        <InputGroup id={'name-0'} title={'1'} required wrapperClass={'inline'}
+                                                    defaultValue={settings.ratingDescriptions[0]} type={'text'}/>
+                                        <InputGroup id={'name-1'} title={'2'} required wrapperClass={'inline'}
+                                                    defaultValue={settings.ratingDescriptions[1]} type={'text'}/>
+                                        <InputGroup id={'name-2'} title={'3'} required wrapperClass={'inline'}
+                                                    defaultValue={settings.ratingDescriptions[2]} type={'text'}/>
+                                        <InputGroup id={'name-3'} title={'4'} required wrapperClass={'inline'}
+                                                    defaultValue={settings.ratingDescriptions[3]} type={'text'}/>
+                                        <InputGroup id={'name-4'} title={'5'} required wrapperClass={'inline'}
+                                                    defaultValue={settings.ratingDescriptions[4]} type={'text'}/>
+                                        <InputGroup id={'name-5'} title={'6'} required wrapperClass={'inline'}
+                                                    defaultValue={settings.ratingDescriptions[5]} type={'text'}/>
+                                        <InputGroup id={'name-6'} title={'7'} required wrapperClass={'inline'}
+                                                    defaultValue={settings.ratingDescriptions[6]} type={'text'}/>
+                                        <InputGroup id={'name-7'} title={'8'} required wrapperClass={'inline'}
+                                                    defaultValue={settings.ratingDescriptions[7]} type={'text'}/>
+                                        <InputGroup id={'name-8'} title={'9'} required wrapperClass={'inline'}
+                                                    defaultValue={settings.ratingDescriptions[8]} type={'text'}/>
+                                        <InputGroup id={'name-9'} title={'10'} required wrapperClass={'inline'}
+                                                    defaultValue={settings.ratingDescriptions[9]} type={'text'}/>
                                     </fieldset>
                                 </div>
                                 <div id={'table-pane'} role={'tabpanel'} aria-labelledby={'table'}

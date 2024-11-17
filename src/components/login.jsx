@@ -102,7 +102,7 @@ const Login = () => {
       name: 'metaData',
       default: {
         'people': [], 'cinemas': [], 'years': [], 'authors': [], 'bookSeries': [], 'consoles': [], entryId: 0, appVersion: "1.0",
-        'movies': {
+        'movie': {
           'overall': statDefaults['movie']
         },
         'tv': {

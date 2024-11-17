@@ -34,13 +34,19 @@ body {
   background-color: #002E62;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: $unit-4;
   h1 {
+    margin-right: auto;
     color: #F4F4F5;
   }
   button.settings::before {
-    content: "";
     background-image: url("../images/essential/menu.svg");
+    content: "";
+  }
+  button.logout::before {
+    background-image: url("../images/arrows/logout.svg");
+    content: "";
   }
 }
 
@@ -115,6 +121,9 @@ body {
   .inputWrapper.inline label {
     flex-grow: 1;
     flex-shrink: 0;
+  }
+  .inputWrapper.required label::after {
+    display: none;
   }
   #generic-pane > .inputWrapper {
     padding-bottom: $unit-6;

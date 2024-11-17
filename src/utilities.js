@@ -56,6 +56,62 @@ export const addEntry = (mediaType, store, year, data, meta) => {
     });
   }
   //TODO: calculate stats and inset into meta file
+  //General stats
+  //Create year entry if not present
+  console.log(meta, mediaType, year)
+  if (!meta[mediaType][year]) {
+    meta[mediaType][year] = JSON.parse(JSON.stringify(statDefaults[mediaType]));
+  }
+  //Update total
+  meta[mediaType].overall.total++;
+  meta[mediaType][year].total++;
+  //New release
+  meta[mediaType][year].release[data.newRelease ? 'new' : 'old']++;
+  meta[mediaType].overall.release[data.newRelease ? 'new' : 'old']++;
+  //Score array
+  if (data.score) {
+    meta[mediaType].overall.scores.push(data.score);
+    meta[mediaType][year].scores.push(data.score);
+  }
+  //runtime
+  if (mediaType !== 'book') {
+    meta[mediaType].overall.runtimes.push(data.time);
+    meta[mediaType][year].runtimes.push(data.time);
+  }
+  //Movie specific stats
+  if (mediaType === 'movie') {
+    //Location
+    if (data.location) {
+      if (!meta['movie'].overall.locations[data.location]) {
+        meta['movie'].overall.locations[data.location] = 1;
+      } else {
+        meta['movie'].overall.locations[data.location]++;
+      }
+      if (!meta['movie'][year].locations[data.location]) {
+        meta['movie'][year].locations[data.location] = 1;
+      } else {
+        meta['movie'][year].locations[data.location]++;
+      }
+    }
+    //People
+    if (data.persons.length > 0) {
+      data.persons.forEach(person => {
+        if (!meta['movie'].overall.people[person]) {
+          meta['movie'].overall.people[person] = 1;
+        } else {
+          meta['movie'].overall.people[person]++;
+        }
+        if (!meta['movie'][year].people[person]) {
+          meta['movie'][year].people[person] = 1;
+        } else {
+          meta['movie'][year].people[person]++;
+        }
+      })
+    } else {
+      meta['movie'].overall.people.alone++;
+      meta['movie'][year].people.alone++;
+    }
+  }
   return { store: store, tempMeta: meta };
 }
 
@@ -68,7 +124,7 @@ export const addEntry = (mediaType, store, year, data, meta) => {
  */
 export const updateCloudAndStores = async (type, newData, newMeta) => {
   const { meta, setMeta , setMovies, setShows, setGames, setBooks } = driveData.getState();
-  const { setUpdateFlag } = mainStore.getState();
+  const { setUpdateFlag, year, setYear } = mainStore.getState();
 
   return new Promise((resolve, reject) => {
     let firstUpdated = false;
@@ -78,6 +134,9 @@ export const updateCloudAndStores = async (type, newData, newMeta) => {
       if (firstUpdated) {
         //Both files updates complete
         setUpdateFlag();
+        if (!year && meta?.years?.length === 1) {
+          setYear({label: meta.years[0], value: meta.years[0]});
+        }
         resolve();
       } else {
         //Only one file finished updating
@@ -137,8 +196,9 @@ export const getStore = (type) => {
  * @param {Object} meta - Zustand metadata to update stats for.
  */
 export const deleteEntry = (mediaType, store, entryId, year, meta) => {
-  const val = store[year].filter(v => {return v.entryId === entryId});
+  let val = store[year].filter(v => {return v.entryId === entryId});
   if (val.length === 1) {
+    val = val[0];
     const i = store[year].indexOf(val[0]);
     switch (mediaType) {
       case 'movie':
@@ -152,6 +212,34 @@ export const deleteEntry = (mediaType, store, entryId, year, meta) => {
     }
     store[year].splice(i, 1);
     //TODO calculate meta stats
+    //General stats
+    //Update total
+    meta[mediaType].overall.total--;
+    meta[mediaType][year].total--;
+    //New Release
+    meta[mediaType][year].release[val.newRelease ? 'new' : 'old']--;
+    meta[mediaType].overall.release[val.newRelease ? 'new' : 'old']--;
+    //Score array
+
+    //Runtime
+
+    if (mediaType === 'movie') {
+      //Location
+      meta['movie'].overall.locations[val.location]--;
+      meta['movie'][year].locations[val.location]--;
+      //People
+      if (val.persons.length > 0) {
+        val.persons.forEach(person => {
+          meta['movie'].overall.people[person]--;
+          meta['movie'][year].people[person]--;
+        });
+      } else {
+        meta['movie'].overall.people.alone--;
+        meta['movie'][year].people.alone--;
+      }
+    }
+
+
     return { store: store, tempMeta: meta };
   } else {
     console.log(`Error: too many results returned for ${mediaType} with ID ${entryId}`);
@@ -169,12 +257,17 @@ export const deleteEntry = (mediaType, store, entryId, year, meta) => {
 export const calcNewRelease = (release, watch, type, settings) => {
   release = new Date(release);
   watch = new Date(watch);
-  let monthDiff = watch.getMonth() - release.getMonth();
-  const dayDiff = watch.getDay() - release.getDay();
-  if (dayDiff < 0) {
-    monthDiff = monthDiff - 1;
+
+  // Calculate the difference in years and months
+  let monthDiff = (watch.getFullYear() - release.getFullYear()) * 12 + (watch.getMonth() - release.getMonth());
+
+  // Adjust for day difference
+  if (watch.getDate() < release.getDate()) {
+    monthDiff -= 1;
   }
-  return monthDiff <= settings.newRelease[type.value]
+
+  // Check if within the new release window
+  return monthDiff <= settings.newRelease[type.value];
 }
 
 /**
