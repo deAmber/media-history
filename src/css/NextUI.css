@@ -562,6 +562,10 @@ button:not(.tab)::before, button:not(.tab)::after, .button::before, .button::aft
   background-color: var(--content1);
   width: 100%;
 }
+.p-datatable table {
+  border-collapse: collapse;
+  width: 100%;
+}
 .p-datatable thead th {
   padding: 0.75rem 0.5rem;
   background-color: var(--default-100);
@@ -624,6 +628,13 @@ button:not(.tab)::before, button:not(.tab)::after, .button::before, .button::aft
 .p-datatable tbody tr:nth-child(even) td:last-of-type {
   border-top-right-radius: 0.5rem;
   border-bottom-right-radius: 0.5rem;
+}
+
+.container {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+  background-color: var(--content1);
 }
 
 /*# sourceMappingURL=NextUI.css.map */

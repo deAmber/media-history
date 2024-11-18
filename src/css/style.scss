@@ -60,6 +60,18 @@ body {
   min-height: calc( 100% - 92px );
 }
 
+//Stats page
+#statPage {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $unit-4;
+  table {
+    th {
+      text-align: left;
+    }
+  }
+}
+
 //Bootstrap
 .d-none {
   display: none;

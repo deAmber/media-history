@@ -17,7 +17,6 @@ const Nav = () => {
       <Link to={'/'} className={`tab ${location.pathname === '/' ? "active" : ""}`}>Home</Link>
       <Link to={'/table'} className={`tab ${location.pathname === '/table' ? "active" : ""}`}>Full Table</Link>
       <Link to={'/stats'} className={`tab ${location.pathname === '/stats' ? "active" : ""}`}>Statistics</Link>
-      <Link to={'/charts'} className={`tab ${location.pathname === '/charts' ? "active" : ""}`}>Visualisations</Link>
       <button className={'tab'} onClick={() => {setAddModal(true)}}>Add new</button>
       <MicroModal open={addModal} handleClose={() => {setAddModal(false)}}
                   children={(handleClose) => <Edit closeButton={handleClose}/>}

@@ -578,6 +578,10 @@ button:not(.tab), .button {
   box-shadow: $shadow-sm;
   background-color: var(--content1);
   width: 100%;
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
   thead {
     th {
       padding: $unit-3 $unit-2;
@@ -654,4 +658,11 @@ button:not(.tab), .button {
       }
     }
   }
+}
+
+.container {
+  padding: $unit-4;
+  border-radius: $rounded-small;
+  box-shadow: $shadow-sm;
+  background-color: var(--content1);
 }

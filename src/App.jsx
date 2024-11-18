@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Header from "./components/header.jsx";
 import Homepage from "./pages/homepage.jsx";
 import Stats from "./pages/stats.jsx";
-import Charts from "./pages/charts.jsx";
 import ViewTable from "./pages/viewTable.jsx";
 import Nav from "./components/nav.jsx";
 import mainStore from "./stores/mainStore.js";
@@ -22,7 +21,6 @@ function App() {
           <Routes>
             <Route path={'/'} element={<div className={'pageContent'}><Homepage/></div>}/>
               <Route path={'/stats'} element={<div className={'pageContent'}><Stats/></div>}/>
-              <Route path={'/charts'} element={<div className={'pageContent'}><Charts/></div>}/>
               <Route path={'/table'} element={<div className={'pageContent'}><ViewTable/></div>}/>
           </Routes>
           </> : <Loader/>}

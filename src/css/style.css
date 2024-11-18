@@ -57,6 +57,15 @@ body {
   min-height: calc(100% - 92px);
 }
 
+#statPage {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+#statPage table th {
+  text-align: left;
+}
+
 .d-none {
   display: none;
 }

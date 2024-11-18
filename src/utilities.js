@@ -111,6 +111,11 @@ export const addEntry = (mediaType, store, year, data, meta) => {
       meta['movie'].overall.people.alone++;
       meta['movie'][year].people.alone++;
     }
+    //Cost
+    if (data.cost || data.cost === 0) {
+      meta[mediaType].overall.cost.push(data.cost);
+      meta[mediaType][year].cost.push(data.cost);
+    }
   }
   return { store: store, tempMeta: meta };
 }
@@ -220,9 +225,11 @@ export const deleteEntry = (mediaType, store, entryId, year, meta) => {
     meta[mediaType][year].release[val.newRelease ? 'new' : 'old']--;
     meta[mediaType].overall.release[val.newRelease ? 'new' : 'old']--;
     //Score array
-
+    meta[mediaType][year].scores.splice(meta[mediaType][year].scores.indexOf(val.score), 1);
+    meta[mediaType].overall.scores.splice(meta[mediaType].overall.scores.indexOf(val.score), 1);
     //Runtime
-
+    meta[mediaType][year].runtimes.splice(meta[mediaType][year].runtimes.indexOf(val.time), 1);
+    meta[mediaType].overall.runtimes.splice(meta[mediaType].overall.runtimes.indexOf(val.time), 1);
     if (mediaType === 'movie') {
       //Location
       meta['movie'].overall.locations[val.location]--;
@@ -237,6 +244,9 @@ export const deleteEntry = (mediaType, store, entryId, year, meta) => {
         meta['movie'].overall.people.alone--;
         meta['movie'][year].people.alone--;
       }
+      //cost
+      meta[mediaType][year].cost.splice(meta[mediaType][year].cost.indexOf(val.cost), 1);
+      meta[mediaType].overall.cost.splice(meta[mediaType].overall.cost.indexOf(val.cost), 1);
     }
 
 
@@ -285,6 +295,7 @@ export const statDefaults = {
     'people': {
       'alone': 0
     },
+    'cost': [],
     'runtimes': [],
   },
   'tv': {
