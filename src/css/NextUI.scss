@@ -73,6 +73,9 @@ body {
     font-size: $font-size-small;
     line-height: $line-height-small;
     color: var(--foreground);
+    .desc {
+      margin-left: $unit-2;
+    }
   }
   &.required {
     label, .label {
@@ -124,8 +127,11 @@ fieldset {
     line-height: $line-height-large;
     color: var(--default-400);
     font-weight: 700;
+    .desc {
+      margin-left: $unit-2;
+    }
   }
-  .inputWrapper:first-of-type {
+  &:not(.inputSplit) .inputWrapper:first-of-type {
     margin-top: $unit-4;
   }
 }
@@ -138,6 +144,7 @@ form.submitted input:invalid {
   gap: $unit-4;
   appearance: none;
   border: none;
+
 }
 input, textarea, select {
   box-shadow: $shadow-sm;
@@ -431,6 +438,7 @@ button:not(.tab), .button {
   }
 }
 
+//Chip
 .chip {
   padding: 0 $unit-1;
   height: 1.5rem;
@@ -459,6 +467,22 @@ button:not(.tab), .button {
   &.danger {
     background-color: var(--danger);
     color: var(--content1);
+  }
+  //Tooltip icons
+  &.desc {
+    display: inline-block;
+    vertical-align: text-bottom;
+    width: 1.5rem;
+    padding: 0;
+    &::before {
+      content: "";
+      background-image: url("../images/essential/info-circle.svg");
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+      background-size: 1rem;
+      filter: var(--filter-foreground);
+    }
   }
 }
 

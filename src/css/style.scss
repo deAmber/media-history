@@ -19,6 +19,10 @@
   padding: 0;
   background-repeat: no-repeat;
   background-position: center;
+  &::before, &::after {
+    background-repeat: no-repeat;
+    background-position: center;
+  }
 }
 
 //document

@@ -1,5 +1,6 @@
 import CreatableSelect from "react-select/creatable";
 import Select from "react-select";
+import Description from "../description.jsx";
 
 /**
  * Group wrapper for a standard html input.
@@ -10,9 +11,9 @@ import Select from "react-select";
  * @param otherProps - Other input properties.
  * @returns {JSX.Element}
  */
-export const InputGroup = ({required, id, title, wrapperClass = "", ...otherProps}) => {
+export const InputGroup = ({required, id, title, wrapperClass = "", descText, ...otherProps}) => {
   return <div className={`inputWrapper ${required ? "required" : ""} ${wrapperClass}`}>
-    <label htmlFor={id}>{title}</label>
+    <label htmlFor={id}>{title}{descText && <Description text={descText}/>}</label>
     <input id={id} name={id} required={required} {...otherProps}/>
   </div>
 }

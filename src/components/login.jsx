@@ -174,6 +174,15 @@ const Login = () => {
         clientId: ClientId,
         scope: 'https://www.googleapis.com/auth/drive.appdata',
         discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
+      }).then(()=> {
+        //Check if already signed in
+        if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
+          //Load all needed data
+          dataSetup();
+
+          //Set the user and show the app
+          setUser(gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getName());
+        }
       });
     };
 
@@ -304,11 +313,6 @@ const Login = () => {
     try {
       await gapi.auth2.getAuthInstance().signIn();
       const user = gapi.auth2.getAuthInstance().currentUser.get();
-      const token = user.getAuthResponse().access_token;
-//TODO: setup auto login for returning vitiors
-      // Save the token and logged-in status in localStorage
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('token', token);
 
       //Load all needed data
       dataSetup();
@@ -331,7 +335,7 @@ const Login = () => {
       </>
     )
   }
-
+//TODO welcome message, explain why google login, notify saved session data
   return <>
     <h2>Please log in to continue</h2>
     <button className={'primary'} onClick={handleGoogleLogin}>Login with Google</button>

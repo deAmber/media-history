@@ -10,7 +10,7 @@ import ViewModal from "../components/viewModal.jsx";
  * Renders a Datatable showing core columns for the selected data type and year.
  * @returns {JSX.Element}
  */
-const ViewTable = ({}) => {
+const ViewTable = () => {
   const { type, year, updateFlag } = mainStore();
   const { movies, shows, games, books, settings } = driveData();
   const [ rowData, setRowData ] = useState(movies?.[year?.value]);

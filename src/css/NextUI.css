@@ -75,6 +75,9 @@ body {
   line-height: 1.25rem;
   color: var(--foreground);
 }
+.inputWrapper label .desc, .inputWrapper .label .desc {
+  margin-left: 0.5rem;
+}
 .inputWrapper.required label:after, .inputWrapper.required .label:after {
   content: "*";
   color: var(--danger);
@@ -123,7 +126,10 @@ fieldset legend {
   color: var(--default-400);
   font-weight: 700;
 }
-fieldset .inputWrapper:first-of-type {
+fieldset legend .desc {
+  margin-left: 0.5rem;
+}
+fieldset:not(.inputSplit) .inputWrapper:first-of-type {
   margin-top: 1rem;
 }
 
@@ -448,6 +454,21 @@ button:not(.tab)::before, button:not(.tab)::after, .button::before, .button::aft
 .chip.danger {
   background-color: var(--danger);
   color: var(--content1);
+}
+.chip.desc {
+  display: inline-block;
+  vertical-align: text-bottom;
+  width: 1.5rem;
+  padding: 0;
+}
+.chip.desc::before {
+  content: "";
+  background-image: url("../images/essential/info-circle.svg");
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  background-size: 1rem;
+  filter: var(--filter-foreground);
 }
 
 .react-tooltip {

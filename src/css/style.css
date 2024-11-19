@@ -20,6 +20,10 @@
   background-repeat: no-repeat;
   background-position: center;
 }
+*::before, *::after {
+  background-repeat: no-repeat;
+  background-position: center;
+}
 
 body {
   height: 100vh;
