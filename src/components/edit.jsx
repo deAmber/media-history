@@ -30,6 +30,7 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
   const [ author, setAuthor ] = useState(data?.author ? {label: data.author, value: data.author} : null);
   const [ bookSeries, setBookSeries ] = useState(data?.series ? {label: data.series, value: data.series} : null);
   const [ bookType, setBookType ] = useState(data?.type ? {label: data.type, value: data.type} : {label: 'Novel', value: 'Novel'});
+  const [ tvSeasons, setTvSeasons ] = useState(data?.seasons ? data.seasons.map(v => {return {label: v, value: v}}) : []);
   const formRef = useRef();
 
   const getNowDate = (now = new Date()) => {
@@ -103,6 +104,8 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
       }
     } else if (editType.value === 'tv') {
       //TODO: Handling multiple seasons (i.e. 1-3)
+      data.seasons = tvSeasons.map(v => parseFloat(v.value));
+      console.log(data.seasons)
       data.episodes = parseInt(data.episodes);
     } else if (editType.value === 'game') {
       //Add console to meta list
@@ -131,10 +134,9 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
         data.seriesNo = null;
       }
       //Book type
-      if (bookType) {
-        data.type = bookType.value;
-      }
+      data.type = bookType ? bookType.value : null;
       //TODO: progress updates
+      data.progressUpdates = [];
     }
     return {processedData: data, year: year, tempMeta: tempMeta}
   }
@@ -201,7 +203,7 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
           {editType.value !== 'movie' && <fieldset className={'inputSplit'}>
             <legend>Timeline</legend>
             <InputGroup required id={'started'} title={'Date Started'} type={'date'} defaultValue={data ? getNowDate(new Date(data.started)) : getNowDate()}/>
-            <InputGroup id={'finished'} title={'Date Finished'} type={'date'} defaultValue={data ? getNowDate(new Date(data.finished)) : null}/>
+            <InputGroup id={'finished'} title={'Date Finished'} type={'date'} defaultValue={data?.finished ? getNowDate(new Date(data.finished)) : null}/>
           </fieldset>}
           {editType.value === 'movie' && <InputGroup required id={'dateWatched'} title={'Date Watched'} type={'date'} defaultValue={data ? getNowDate(new Date(data.dateWatched)) : getNowDate()}/>}
           <InputGroup required={editType.value === 'movie'} wrapperClass={'suffixed'} title={'Score'} id={'score'}
@@ -229,18 +231,15 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
             </div>
             <InputGroup wrapperClass={'prefixed'} id={'cost'} title={'Cost'} type={'number'} min={0} step={0.01} defaultValue={data?.cost ? data.cost : 0.00}/>
             <InputCreateSelectGroup id={'seenWith'} title={'Seen with'} options={meta.people} value={people} setValue={setPeople}
-                                    isMulti={true} placeholder={'Anyone you watched the movie with'} classNames={{
-                                      multiValue: () => {
-                                        return 'chip'
-                                      }
-                                    }}/>
+                                    isMulti={true} placeholder={'Anyone you watched the movie with'}/>
           </>}
           {editType.value === 'tv' && <fieldset className={'inputSplit'}>
             <legend>Show Length</legend>
-            <div className={'inputWrapper required'}>
-              <label htmlFor={'seasons'}>Seasons</label>
-              <input id={'seasons'} name={'seasons'} type={'text'} required/>
-            </div>
+            <InputCreateSelectGroup id={'seasons'} required title={"Seasons"} options={[]} isMulti noOptionsMessage={() => null}
+                                    value={tvSeasons} setValue={setTvSeasons} isValidNewOption={(v) => {
+                                      const regex = /^([0-9]+(\.[0-9]*)?)$/;
+                                      return regex.test(v);
+                                    }} formatCreateLabel={(num) => <>Add season <b>{num}</b></>}/>
             <InputGroup id={'episodes'} title={'Total Episodes'} type={'number'} step={1} min={0} required defaultValue={data?.episodes ? data.episodes : null}/>
           </fieldset>}
           {editType.value === 'game' && <>

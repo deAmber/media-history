@@ -1,4 +1,4 @@
-import {gapi} from "gapi-script";
+import { gapi } from "gapi-script";
 import mainStore from "./stores/mainStore.js";
 import driveData from "./stores/driveData.js";
 
@@ -116,6 +116,16 @@ export const addEntry = (mediaType, store, year, data, meta) => {
       meta[mediaType].overall.cost.push(data.cost);
       meta[mediaType][year].cost.push(data.cost);
     }
+  } else if (mediaType === 'tv') {
+    //TV Specific stats
+    //Total seasons
+    meta['tv'].overall.seasons += data.seasons.length;
+    meta['tv'][year].seasons += data.seasons.length;
+    //Total episodes
+    meta['tv'].overall.episodes += data.episodes;
+    meta['tv'][year].episodes += data.episodes;
+    //TODO longest show by episodes and runtime stored as objects
+    //When deleting will need to do some sorting to assign the values - too costly to do whenever showing stats page
   }
   return { store: store, tempMeta: meta };
 }
@@ -247,8 +257,14 @@ export const deleteEntry = (mediaType, store, entryId, year, meta) => {
       //cost
       meta[mediaType][year].cost.splice(meta[mediaType][year].cost.indexOf(val.cost), 1);
       meta[mediaType].overall.cost.splice(meta[mediaType].overall.cost.indexOf(val.cost), 1);
+    } else if (mediaType === 'tv') {
+      //Total seasons
+      meta['tv'].overall.seasons -= val.seasons.length;
+      meta['tv'][year].seasons -= val.seasons.length;
+      //Total episodes
+      meta['tv'].overall.episodes -= val.episodes;
+      meta['tv'][year].episodes -= val.episodes;
     }
-
 
     return { store: store, tempMeta: meta };
   } else {
@@ -306,6 +322,7 @@ export const statDefaults = {
       'old': 0,
     },
     'episodes': 0,
+    'seasons': 0,
     'runtimes': [],
   },
   'game': {

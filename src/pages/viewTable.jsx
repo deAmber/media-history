@@ -5,6 +5,7 @@ import driveData from "../stores/driveData.js";
 import mainStore from "../stores/mainStore.js";
 import { Tooltip } from 'react-tooltip';
 import ViewModal from "../components/viewModal.jsx";
+import { NewUserText } from "../components/utilities.jsx";
 
 /**
  * Renders a Datatable showing core columns for the selected data type and year.
@@ -99,14 +100,13 @@ const ViewTable = () => {
 
   //New user with no data
   if (!year) {
-    return <></>
+    return <NewUserText/>
   }
 
-  //TODO: action column with view more and edit buttons
   //TODO: filtering?
   //TODO: smart up sorting of watchtime column
   return <>
-    <DataTable value={rowData} sortField={type.value === 'movie' ? 'dateWatched' : 'started'} emptyMessage={`No ${type.label} found for ${year.label}`}>
+    <DataTable value={rowData} sortField={type.value === 'movie' ? 'dateWatched' : 'started'} sortOrder={-1} emptyMessage={`No ${type.label} found for ${year.label}`}>
       <Column field={'title'} header={"Title"} sortable frozen/>
       {checkColVis('release') && <Column field={'release'} header={'Release Date'} body={formatDate} sortable/>}
       {(checkColVis('author') && type.value === 'book') && <Column field={'author'} header={'Author'} body={handleEmptyCell} sortable/>}

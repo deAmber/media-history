@@ -1,5 +1,6 @@
 import mainStore from "../stores/mainStore.js";
 import driveData from "../stores/driveData.js";
+import { NewUserText } from "../components/utilities.jsx";
 
 const Homepage = ({}) => {
   const { user, year } = mainStore();
@@ -9,7 +10,7 @@ const Homepage = ({}) => {
   if (!year) {
     return <>
       <p>Hi {user}! Welcome to Media History, a simple app for tracking your watching, reading, and playing habits!</p>
-      <p>It looks like you don't have any data at the moment, so there won't be much to see. Try adding a new media entry in by clicking the "Add new" button in the menu above.</p>
+      <NewUserText/>
       <p>App Explination</p>
     </>
   }

@@ -56,8 +56,12 @@ export const InputCreateSelectGroup = ({required, id, title, wrapperClass = "", 
   return <div className={`inputWrapper ${required ? "required" : ""} ${wrapperClass}`}>
     <label htmlFor={id}>{title}</label>
     <CreatableSelect id={id} options={options.map(v => {
-      return {value: v, label: v}
-    })}
+                       return {value: v, label: v}
+                     })} classNames={otherProps.isMulti ? {
+                       multiValue: () => {
+                         return 'chip'
+                       }
+                     } : {}}
                      value={value} onChange={setValue}
                      menuPortalTarget={document.body}
                      unstyled classNamePrefix={'react-select'} required={required} {...otherProps}/>

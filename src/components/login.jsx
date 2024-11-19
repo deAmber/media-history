@@ -312,6 +312,23 @@ const Login = () => {
   const handleGoogleLogin = async () => {
     try {
       await gapi.auth2.getAuthInstance().signIn();
+      //TODO: handle login token expiry
+      // gapi.auth2.getAuthInstance().grantOfflineAccess({prompt: 'consent'}).then(code => {
+      //   new Promise<{ code: string }>((res) => {
+      //     gapi.auth2.getAuthInstance().isSignedIn.listen(() => res(code));
+      //   })
+      // }).then(
+      //   ({ code }) => {
+      //     const user = gapi.auth2.getAuthInstance().currentUser.get();
+      //
+      //     //Load all needed data
+      //     dataSetup();
+      //
+      //     //Show the app
+      //     setUser(user.getBasicProfile().getName());
+      //     }
+      //   );
+      // await gapi.auth2.getAuthInstance().grantOfflineAccess()
       const user = gapi.auth2.getAuthInstance().currentUser.get();
 
       //Load all needed data
