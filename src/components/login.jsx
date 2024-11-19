@@ -197,7 +197,6 @@ const Login = () => {
         setMeta(temp);
       }
     }
-    console.log(meta)
   }, [fileIDs, meta])
 
   //Creates needed data files in drive if they do now exist
@@ -346,7 +345,7 @@ const Login = () => {
     return (
       <>
         <h2>Login Error</h2>
-        <p>We're sorry, there seems to have been some trouble logging you in.<br/>
+        <p>We&#39;re sorry, there seems to have been some trouble logging you in.<br/>
           Please try again later, or if this issue persists, please contact us.
         </p>
       </>

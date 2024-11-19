@@ -61,6 +61,24 @@ body {
   min-height: calc(100% - 92px);
 }
 
+@media (max-width: 768px) {
+  #tabNav {
+    margin-bottom: 0.75rem;
+  }
+}
+
+#mobileSelects {
+  margin-bottom: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+@media (max-width: 376px) {
+  #mobileSelects {
+    grid-template-columns: 1fr;
+  }
+}
+
 #statPage {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -68,6 +86,11 @@ body {
 }
 #statPage table th {
   text-align: left;
+}
+@media (max-width: 1024px) {
+  #statPage {
+    grid-template-columns: 1fr;
+  }
 }
 
 .d-none {

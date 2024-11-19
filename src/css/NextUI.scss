@@ -144,7 +144,13 @@ form.submitted input:invalid {
   gap: $unit-4;
   appearance: none;
   border: none;
-
+  .inputWrapper {
+    margin-top: 0;
+  }
+  @media (max-width: $breakSM) {
+    flex-direction: column;
+    gap: $unit-3;
+  }
 }
 input, textarea, select {
   box-shadow: $shadow-sm;
@@ -545,6 +551,7 @@ button:not(.tab), .button {
   [role="dialog"] {
     background-color: var(--content1) !important;
     min-width: 50% !important;
+    max-width: 50% !important;
     max-height: 70% !important;
     height: 70%;
     overflow: hidden !important;
@@ -591,6 +598,17 @@ button:not(.tab), .button {
       .content {
         height: auto;
       }
+    }
+    @media (max-width: $breakLG) {
+      max-width: 75% !important;
+      min-width: 75% !important;
+    }
+    @media (max-width: $breakMD) {
+      max-width: 100% !important;
+      max-height: 100% !important;
+      height: 100%;
+      width: 100%;
+      border-radius: 0 !important;
     }
   }
 }

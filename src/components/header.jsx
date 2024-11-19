@@ -7,7 +7,6 @@ import { updateFile } from "../utilities.js";
 import Loader from "./loader.jsx";
 import { gapi } from "gapi-script";
 import InputGroup from "./formElements/inputGroups.jsx";
-import { Tooltip } from 'react-tooltip';
 import Description from "./description.jsx";
 
 const Header = () => {
@@ -80,7 +79,7 @@ const Header = () => {
             <h2>Settings</h2>
           </div>
           <div className={'content'}>
-            <div role={'tablist'} id={'tabNav'} className={'tabGroup'}>
+            <div role={'tablist'} id={'tabNav-settings'} className={'tabGroup'}>
               <button className={`tab ${openTab === 'generic' && 'active'}`} id={'generic'} aria-controls={'generic-pane'}
                       role={`tab`}
                       aria-selected={openTab === 'generic'} onClick={() => {
@@ -115,7 +114,6 @@ const Header = () => {
               //Update settings
               console.log(formData)
               updateSettings(formData);
-              return;
             }}>
               <div id={'generic-pane'} role={'tabpanel'} aria-labelledby={'generic'}
                    className={openTab !== 'generic' ? 'd-none' : ''}>
