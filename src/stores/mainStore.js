@@ -10,7 +10,9 @@ const mainStore = create((set) => ({
   user: false,
   setUser: (option) => (set({user: option})),
   updateFlag: 0,
-  setUpdateFlag: () => set((state) => ({updateFlag: state.updateFlag + 1}))
+  setUpdateFlag: () => set((state) => ({updateFlag: state.updateFlag + 1})),
+  selectedEntry: false,
+  setSelectedEntry: (option) => (set({selectedEntry: option}))
 }));
 
 export default mainStore;

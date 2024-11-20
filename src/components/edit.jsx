@@ -21,7 +21,7 @@ import InputGroup, {InputCreateSelectGroup, InputSelectGroup} from "./formElemen
  * @returns {JSX.Element}
  */
 const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => {
-  const { type } = mainStore();
+  const { type, setSelectedEntry } = mainStore();
   const { meta, settings } = driveData();
   const [ editType, setEditType ] = useState(forceEditType || type)
   const [ saving, setSaving ] = useState(false);
@@ -51,7 +51,7 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
     let tempMeta = meta;
     //Update entry ID if not present
     if (!data.entryId) {
-      tempMeta.entryId = tempMeta.entryId + 1;
+      tempMeta.entryId++;
       data.entryId = tempMeta.entryId;
     }
     //Score
@@ -74,6 +74,10 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
       data.time = `${hours}:${minutes < 10 ? `0${minutes}` : minutes}`;
       delete data.hours;
       delete data.minutes;
+    }
+    //TODO: days to watch/read
+    if (editType.value !== 'movie') {
+      data.days = null;
     }
     //Add new release flag
     data.newRelease = calcNewRelease(data.release, data[editType.value === 'movie' ? 'dateWatched' : 'started'], editType, settings);
@@ -117,7 +121,14 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
       } else {
         data.consoles = false;
       }
+      //Format achievements
+      data.achievementsGained = parseInt(data.achievementsGained);
+      data.achievementsTotal = parseInt(data.achievementsTotal);
+      data.achievementPct = data.achievementsGained / data.achievementsTotal;
     } else if (editType.value === 'book') {
+      //Correct data types
+      data.pages = data.pages ? parseInt(data.pages) : null;
+      data.words = data.words ? parseInt(data.words) : null;
       //Add author
       data.author = author.label;
       if (!tempMeta.authors.includes(author.label)) {
@@ -136,6 +147,7 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
       //Book type
       data.type = bookType ? bookType.value : null;
       //TODO: progress updates
+      //TODO: days to read
       data.progressUpdates = [];
     }
     return {processedData: data, year: year, tempMeta: tempMeta}
@@ -166,6 +178,10 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
     //Update and close modal
     updateCloudAndStores(editType.value, finalStore, finalMeta).then(() => {
       setSaving(false);
+      if (data) {
+        //Update open view modal
+        setSelectedEntry(processedData);
+      }
       closeButton();
     })
   }

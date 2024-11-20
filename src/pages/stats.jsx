@@ -6,11 +6,15 @@ import { NewUserText } from "../components/utilities.jsx";
  * Calculates the total or average runtime from an array of durations.
  * @param {Array} timeArr - Array of duration strings.
  * @param {Boolean} average - Whether to average the results.
+ * @param {Number} [length] - Total to divide by, defaults to timeArr length.
  * @returns {string}
  */
-const runtimes = (timeArr, average = false) => {
+const runtimes = (timeArr, average = false, length = false) => {
   if (timeArr.length === 0) {
     return '-';
+  }
+  if (!length) {
+    length = timeArr.length
   }
   //Total all minutes and hours
   let total = timeArr.reduce((prev, curr) => {
@@ -22,8 +26,8 @@ const runtimes = (timeArr, average = false) => {
   total[1] = Math.floor(total[1] % 60);
   //Average both scores and resettle minutes to hours
   if (average) {
-    let hr = total[0] / timeArr.length;
-    let min = total[1] / timeArr.length;
+    let hr = total[0] / length;
+    let min = total[1] / length;
     min += (hr % 1) * 60;
     hr = Math.floor(hr) + Math.floor(min/60);
     min = Math.floor(min % 60);
@@ -149,10 +153,59 @@ const Stats = ({}) => {
         </tr>
         <tr>
           <td>Average Episode Runtime</td>
-          {/*TODO*/}
-          {metaYear && <td>{metaYear.episodes / metaYear.total}</td>}
-          {metaPreviousYear && <td>{metaPreviousYear.episodes / metaPreviousYear.total}</td>}
-          <td>{metaOverall.episodes / metaOverall.total}</td>
+          {metaYear && <td>{runtimes(metaYear.runtimes, true, metaYear.episodes)}</td>}
+          {metaPreviousYear && <td>{runtimes(metaPreviousYear.runtimes, true, metaPreviousYear.episodes)}</td>}
+          <td>{runtimes(metaOverall.runtimes, true, metaOverall.episodes)}</td>
+        </tr>
+      </>}
+      {type.value === 'game' && <>
+        <tr>
+          <td>Achievements Gained</td>
+          {metaYear && <td>{metaYear.achievements.gained === 0 ? "-" : metaYear.achievements.gained}</td>}
+          {metaPreviousYear &&
+            <td>{metaPreviousYear.achievements.gained === 0 ? "-" : metaPreviousYear.achievements.gained}</td>}
+          <td>{metaOverall.achievements.gained === 0 ? "-" : metaOverall.achievements.gained}</td>
+        </tr>
+        <tr>
+          <td>Achievements Total</td>
+          {metaYear && <td>{metaYear.achievements.total === 0 ? "-" : metaYear.achievements.total}</td>}
+          {metaPreviousYear &&
+            <td>{metaPreviousYear.achievements.total === 0 ? "-" : metaPreviousYear.achievements.total}</td>}
+          <td>{metaOverall.achievements.total === 0 ? "-" : metaOverall.achievements.total}</td>
+        </tr>
+        <tr>
+          <td>Achievement Rate</td>
+          {metaYear && <td>{metaYear.achievements.gained === 0 ? "-" : (metaYear.achievements.gained / metaYear.achievements.total * 100).toFixed('2')}%</td>}
+          {metaPreviousYear &&
+            <td>{metaPreviousYear.achievements.gained === 0 ? "-" : (metaPreviousYear.achievements.gained / metaPreviousYear.achievements.total * 100).toFixed("2")}%</td>}
+          <td>{metaOverall.achievements.gained === 0 ? "-" : (metaOverall.achievements.gained / metaOverall.achievements.total * 100).toFixed("2")}%</td>
+        </tr>
+      </>}
+      {type.value === 'book' && <>
+        <tr>
+          <td>Total Pages</td>
+          {metaYear && <td>{metaYear.pages?.reduce((prev, curr) => prev + curr) || "-"}</td>}
+          {metaPreviousYear && <td>{metaPreviousYear.pages?.reduce((prev, curr) => prev + curr) || "-"}</td>}
+          <td>{metaOverall.pages?.reduce((prev, curr) => prev + curr) || "-"}</td>
+        </tr>
+        <tr>
+          <td>Average Pages per book</td>
+          {metaYear && <td>{metaYear.pages ? Math.round(metaYear.pages?.reduce((prev, curr) => prev + curr) / metaYear.total) : "-"}</td>}
+          {metaPreviousYear &&
+            <td>{metaPreviousYear.pages ? Math.round(metaPreviousYear.pages?.reduce((prev, curr) => prev + curr) / metaPreviousYear.total) : "-"}</td>}
+          <td>{metaOverall.pages ? Math.round(metaOverall.pages?.reduce((prev, curr) => prev + curr) / metaOverall.total) : "-"}</td>
+        </tr>
+        <tr>
+          <td>Total Words</td>
+          {metaYear && <td>{metaYear.words?.reduce((prev, curr) => prev + curr) || "-"}</td>}
+          {metaPreviousYear && <td>{metaPreviousYear.words?.reduce((prev, curr) => prev + curr) || "-"}</td>}
+          <td>{metaOverall.words?.reduce((prev, curr) => prev + curr) || "-"}</td>
+        </tr>
+        <tr>
+          <td>Average Words per book</td>
+          {metaYear && <td>{metaYear.words ? Math.round(metaYear.words?.reduce((prev, curr) => prev + curr) / metaYear.total) : "-"}</td>}
+          {metaPreviousYear && <td>{metaPreviousYear.words ? Math.round(metaPreviousYear.words?.reduce((prev, curr) => prev + curr) / metaPreviousYear.total) : "-"}</td>}
+          <td>{metaOverall.words ? Math.round(metaOverall.words?.reduce((prev, curr) => prev + curr) / metaOverall.total) : "-"}</td>
         </tr>
       </>}
       </tbody>
@@ -163,13 +216,51 @@ const Stats = ({}) => {
   //Check previous wrapup to see the high/lows used there
   const highLowTable = <div className={'p-datatable'}>
     <table>
-      <thead><tr></tr></thead>
-      <tbody></tbody>
+      <thead>
+        <tr><th></th><th>Title</th><th>Value</th></tr>
+      </thead>
+      <tbody>
+        {metaYear?.highLow.score?.high ? <tr>
+          <td>Highest Score</td>
+          <td>{metaYear && metaYear.highLow.score.high.val}</td>
+          <td>{metaYear && metaYear.highLow.score.high.titles.join(', ')}</td>
+        </tr> : <></>}
+        {metaYear?.highLow.score?.low ? <tr>
+          <td>Lowest Score</td>
+          <td>{metaYear && metaYear.highLow.score.low.val}</td>
+          <td>{metaYear && metaYear.highLow.score.low.titles.join(', ')}</td>
+        </tr> : <></>}
+        {type.value !== 'book' && <>
+          {metaYear?.highLow.runtimes.high?.val ? <tr>
+            <td>Highest Cost</td>
+            <td>${metaYear && metaYear.highLow.runtimes.high.val}</td>
+            <td>{metaYear && metaYear.highLow.runtimes.high.titles.join(', ')}</td>
+          </tr> : <></>}
+          {metaYear?.highLow.runtimes.low?.val ? <tr>
+            <td>Lowest Cost</td>
+            <td>${metaYear && metaYear.highLow.runtimes.low.val}</td>
+            <td>{metaYear && metaYear.highLow.runtimes.low.titles.join(', ')}</td>
+          </tr> : <></>}
+        </>}
+        {type.value === 'movie' && <>
+          {metaYear?.highLow.cost.high?.val ? <tr>
+            <td>Highest Cost</td>
+            <td>${metaYear && metaYear.highLow.cost.high.val.toFixed(2)}</td>
+            <td>{metaYear && metaYear.highLow.cost.high.titles.join(', ')}</td>
+          </tr> : <></>}
+          {metaYear?.highLow.cost.low?.val ? <tr>
+            <td>Lowest Cost</td>
+            <td>${metaYear && metaYear.highLow.cost.low.val.toFixed(2)}</td>
+            <td>{metaYear && metaYear.highLow.cost.low.titles.join(', ')}</td>
+          </tr> : <></>}
+        </>}
+      </tbody>
     </table>
   </div>
 
   return <div id={'statPage'}>
     {statTable}
+    {highLowTable}
   </div>
 }
 

@@ -1,5 +1,6 @@
 import { Tooltip } from 'react-tooltip';
 import driveData from "../stores/driveData.js";
+import mainStore from "../stores/mainStore.js";
 import { useState } from "react";
 import MicroModal from "react-micro-modal";
 import Loader from "../components/loader.jsx";
@@ -10,18 +11,17 @@ import { getStore, deleteEntry, updateCloudAndStores } from "../utilities.js";
  * MicroModal view entry content
  * @param {Boolean} open - Sets modal open state.
  * @param handleClose - close modal function
- * @param {Object} data - Data entry for the modal.
+ * @param {Object} selectedEntry - selectedEntry entry for the modal.
  * @param type - Media type.
  * @returns {JSX.Element}
  */
-const ViewModal = ({open, handleClose, data, type}) => {
-  const { settings, meta, movies, shows, games, books } = driveData();
+const ViewModal = ({open, handleClose, type}) => {
+  const { settings, meta } = driveData();
+  const { selectedEntry, setSelectedEntry } = mainStore();
   const [ del, setDel ] = useState(false);
   const [ edit, setEdit ]= useState(false);
   const [ saving, setSaving ] = useState(false);
-  console.log(data)
-
-  //TODO: editing does not update the currently open modal
+  console.log(selectedEntry)
 
   /**
    * Handles the delete button - removing the entry from Zustand and syncing the change with Google.
@@ -29,8 +29,9 @@ const ViewModal = ({open, handleClose, data, type}) => {
   const handleDelete = () => {
     setSaving(true);
     //Get updates stores and meta.
-    const { store, tempMeta } = deleteEntry(type.value, getStore(type.value), data.entryId, data.year, meta);
+    const { store, tempMeta } = deleteEntry(type.value, getStore(type.value), selectedEntry.entryId, selectedEntry.year, meta);
     updateCloudAndStores(type.value, store, tempMeta).then(() => {
+      setSelectedEntry(false);
       handleClose();
       setSaving(false);
       setDel(false);
@@ -40,10 +41,10 @@ const ViewModal = ({open, handleClose, data, type}) => {
   const DelContent = <>
     {saving && <Loader message={`Deleting entry, please wait...`}/>}
     <div className={'title'}>
-      <h2>Are you sure you want to delete {data.title}?</h2>
+      <h2>Are you sure you want to delete {selectedEntry.title}?</h2>
     </div>
     <div className={'content'} id={'deleteEntryModal'}>
-      <p>This will remove the entry from the data files and update the statistics.</p>
+      <p>This will remove the entry from the selectedEntry files and update the statistics.</p>
       <p>This action cannot be undone and wil lbe permanent.</p>
     </div>
     <div className={'footer'}>
@@ -58,48 +59,48 @@ const ViewModal = ({open, handleClose, data, type}) => {
     {!del && <>
       {saving && <Loader message={`Saving new settings, please wait...`}/>}
       <div className={'title'}>
-        <h2>{data.title}</h2>
+        <h2>{selectedEntry.title}</h2>
       </div>
-      <div className={'content'} id={'viewEntryModal'}>
+      <div key={saving ? 1 : 0} className={'content'} id={'viewEntryModal'}>
         <div><span className={'field'}>Date Released</span><span
-          className={'value'}>{new Date(data.release).toLocaleDateString()}</span></div>
+          className={'value'}>{new Date(selectedEntry.release).toLocaleDateString()}</span></div>
         {type.value === 'book' && <>
-          {data.author && <div><span className={'field'}>Author</span><span className={'value'}>{data.author}</span></div>}
-          {data.series && <div><span className={'field'}>Series</span><span className={'value'}>{data.series}</span></div>}
-          {data.seriesNo && <div><span className={'field'}>Series Number</span><span className={'value'}>{data.seriesNo}</span></div>}
+          {selectedEntry.author && <div><span className={'field'}>Author</span><span className={'value'}>{selectedEntry.author}</span></div>}
+          {selectedEntry.series && <div><span className={'field'}>Series</span><span className={'value'}>{selectedEntry.series}</span></div>}
+          {selectedEntry.seriesNo && <div><span className={'field'}>Series Number</span><span className={'value'}>{selectedEntry.seriesNo}</span></div>}
         </>}
-        {type.value === 'movie' && <div><span className={'field'}>Date Watched</span><span className={'value'}>{new Date(data.dateWatched).toLocaleDateString()} {data.newRelease && <><span className="chip success" data-tooltip-id={'tooltip-new'} data-tooltip-content={"New release"}>New</span><Tooltip className={'success'} id={'tooltip-new'}/></>}</span></div>}
+        {type.value === 'movie' && <div><span className={'field'}>Date Watched</span><span className={'value'}>{new Date(selectedEntry.dateWatched).toLocaleDateString()} {selectedEntry.newRelease && <><span className="chip success" data-tooltip-id={'tooltip-new'} data-tooltip-content={"New release"}>New</span><Tooltip className={'success'} id={'tooltip-new'}/></>}</span></div>}
         {type.value !== 'movie' && <>
-          {data.started && <div><span className={'field'}>Date Started</span><span className={'value'}>{new Date(data.started).toLocaleDateString()}{data.newRelease && <><span className="chip success" data-tooltip-id={'tooltip-new'} data-tooltip-content={"New release"}>New</span><Tooltip id={'tooltip-new'}/></>}</span></div>}
-          {data.finished && <div><span className={'field'}>Date Finished</span><span className={'value'}>{new Date(data.finished).toLocaleDateString()}</span></div>}
-          {(data.started && data.finished) && <div><span className={'field'}>Days to {type.value === 'book' ? 'read' : (type.value === 'game' ? 'play' : 'watch')}</span><span className={'value'}>{Math.floor(Math.abs(new Date(data.finished) - new Date(data.started)) / (1000 * 60 * 60 * 24)) + 1}</span></div>}
+          {selectedEntry.started && <div><span className={'field'}>Date Started</span><span className={'value'}>{new Date(selectedEntry.started).toLocaleDateString()}{selectedEntry.newRelease && <><span className="chip success" data-tooltip-id={'tooltip-new'} data-tooltip-content={"New release"}>New</span><Tooltip id={'tooltip-new'}/></>}</span></div>}
+          {selectedEntry.finished && <div><span className={'field'}>Date Finished</span><span className={'value'}>{new Date(selectedEntry.finished).toLocaleDateString()}</span></div>}
+          {(selectedEntry.started && selectedEntry.finished) && <div><span className={'field'}>Days to {type.value === 'book' ? 'read' : (type.value === 'game' ? 'play' : 'watch')}</span><span className={'value'}>{Math.floor(Math.abs(new Date(selectedEntry.finished) - new Date(selectedEntry.started)) / (1000 * 60 * 60 * 24)) + 1}</span></div>}
         </>}
-        {data.score && <div><span className={'field'}>Score</span><span className={'value'} data-tooltip-id={'tooltip-score'} data-tooltip-content={settings.ratingDescriptions[parseInt(data.score)-1]}>{data.score}/10</span><Tooltip id={'tooltip-score'} className={data.score >= 7 ? "success" : data.score >= 3 ? "warning" : "danger"}/></div>}
-        {data.thoughts && <div><span className={'field'}>{settings.columnNames.shortDesc}</span><span className={'value'}>{data.thoughts}</span></div>}
-        {data.review && <div><span className={'field'}>{settings.columnNames.longDesc}</span><span className={'value'}>{data.review}</span></div>}
+        {selectedEntry.score && <div><span className={'field'}>Score</span><span className={'value'} data-tooltip-id={'tooltip-score'} data-tooltip-content={settings.ratingDescriptions[parseInt(selectedEntry.score)-1]}>{selectedEntry.score}/10</span><Tooltip id={'tooltip-score'} className={selectedEntry.score >= 7 ? "success" : selectedEntry.score >= 3 ? "warning" : "danger"}/></div>}
+        {selectedEntry.thoughts && <div><span className={'field'}>{settings.columnNames.shortDesc}</span><span className={'value'}>{selectedEntry.thoughts}</span></div>}
+        {selectedEntry.review && <div><span className={'field'}>{settings.columnNames.longDesc}</span><span className={'value'}>{selectedEntry.review}</span></div>}
         {type.value === 'movie' && <>
-          {data.location && <div><span className={'field'}>Location</span><span className={'value'}>{data.location}</span></div>}
-          {(data.cost || data.cost === 0) && <div><span className={'field'}>Cost</span><span className={'value'}>{data.cost === 0 ? "$0.00" : `$${data.cost.toFixed(2)}`}</span></div>}
-          {data.persons && <div><span className={'field'}>Seen with</span><span className={'value'}>{data.persons.join(", ")}</span></div>}
+          {selectedEntry.location && <div><span className={'field'}>Location</span><span className={'value'}>{selectedEntry.location}</span></div>}
+          {(selectedEntry.cost || selectedEntry.cost === 0) && <div><span className={'field'}>Cost</span><span className={'value'}>{selectedEntry.cost === 0 ? "$0.00" : `$${selectedEntry.cost.toFixed(2)}`}</span></div>}
+          {selectedEntry.persons?.length > 0 && <div><span className={'field'}>Seen with</span><span className={'value'}>{selectedEntry.persons.join(", ")}</span></div>}
         </>}
         {type.value === 'tv' && <>
-          {data.seasons && <div><span className={'field'}>Seasons</span><span className={'value'}>{data.seasons}</span></div>}
-          {data.episodes && <div><span className={'field'}>Episodes</span><span className={'value'}>{data.episodes}</span></div>}
+          {selectedEntry.seasons && <div><span className={'field'}>Seasons</span><span className={'value'}>{selectedEntry.seasons}</span></div>}
+          {selectedEntry.episodes && <div><span className={'field'}>Episodes</span><span className={'value'}>{selectedEntry.episodes}</span></div>}
         </>}
         {type.value === 'game' && <>
-          {data.consoles && <div><span className={'field'}>Console</span><span className={'value'}>{data.consoles}</span></div>}
-          {data.achievementsGained && <div><span className={'field'}>Achievements Gained</span><span className={'value'}>{data.achievementsGained}</span></div>}
-          {data.achievementsTotal && <div><span className={'field'}>Achievements Total</span><span className={'value'}>{data.achievementsTotal}</span></div>}
-          {(data.achievementsTotal) && <div><span className={'field'}>Achievement Percentage</span><span className={'value'}>{!data.achievementsGained ? "0" : (data.achievementsTotal / data.achievementsGained) * 100}%</span></div>}
+          {selectedEntry.consoles && <div><span className={'field'}>Console</span><span className={'value'}>{selectedEntry.consoles}</span></div>}
+          {selectedEntry.achievementsGained && <div><span className={'field'}>Achievements Gained</span><span className={'value'}>{selectedEntry.achievementsGained}</span></div>}
+          {selectedEntry.achievementsTotal && <div><span className={'field'}>Achievements Total</span><span className={'value'}>{selectedEntry.achievementsTotal}</span></div>}
+          {(selectedEntry.achievementPct) && <div><span className={'field'}>Achievement Percentage</span><span className={'value'}>{!selectedEntry.achievementPct ? "-" : (selectedEntry.achievementPct*100).toFixed(2)}%</span></div>}
         </>}
         {type.value === 'book' && <>
-          {data.pages && <div><span className={'field'}>Pages</span><span className={'value'}>{data.pages}</span></div>}
-          {data.words && <div><span className={'field'}>Words</span><span className={'value'}>{data.words}</span></div>}
-          {data.format && <div><span className={'field'}>Format</span><span className={'value'}>{data.format}</span></div>}
-          {data.type && <div><span className={'field'}>Type</span><span className={'value'}>{data.type}</span></div>}
+          {selectedEntry.pages && <div><span className={'field'}>Pages</span><span className={'value'}>{selectedEntry.pages}</span></div>}
+          {selectedEntry.words && <div><span className={'field'}>Words</span><span className={'value'}>{selectedEntry.words}</span></div>}
+          {selectedEntry.format && <div><span className={'field'}>Format</span><span className={'value'}>{selectedEntry.format}</span></div>}
+          {selectedEntry.type && <div><span className={'field'}>Type</span><span className={'value'}>{selectedEntry.type}</span></div>}
         </>}
-        {(type.value !== 'book' && data.time) && <div><span className={'field'}>Total {type.value === 'game' ? "Playtime" : "Runtime"}</span><span className={'value'}>{data.time}</span></div>}
-        {data.notes && <div><span className={'field'}>Notes</span><span className={'value'}>{data.notes}</span></div>}
+        {(type.value !== 'book' && selectedEntry.time) && <div><span className={'field'}>Total {type.value === 'game' ? "Playtime" : "Runtime"}</span><span className={'value'}>{selectedEntry.time}</span></div>}
+        {selectedEntry.notes && <div><span className={'field'}>Notes</span><span className={'value'}>{selectedEntry.notes}</span></div>}
       </div>
       <div className={'footer'}>
         <button onClick={() => {setDel(true)}} className={'danger'}>Delete</button>
@@ -114,7 +115,7 @@ const ViewModal = ({open, handleClose, data, type}) => {
       return DelContent
     }
     if (edit) {
-      return <Edit closeButton={() => {setEdit(false)}} data={data} forceEditType={type}/>
+      return <Edit closeButton={() => {setEdit(false)}} data={selectedEntry} forceEditType={type}/>
     }
     return MainContent
   }} overrides={{

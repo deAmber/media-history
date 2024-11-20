@@ -39,7 +39,7 @@ export const updateFile = async (fileID, rawContent) => {
  */
 export const addEntry = (mediaType, store, year, data, meta) => {
   //Add entry to movie file
-  let date = mediaType === 'movie' ? 'dateWatched': 'dateStarted';
+  let date = mediaType === 'movie' ? 'dateWatched': 'started';
   if (!store[year]) {
     store[year] = [data];
   } else {
@@ -72,6 +72,8 @@ export const addEntry = (mediaType, store, year, data, meta) => {
   if (data.score) {
     meta[mediaType].overall.scores.push(data.score);
     meta[mediaType][year].scores.push(data.score);
+    //Score high-low
+    meta[mediaType][year].highLow.score = setHighLow(meta[mediaType][year].highLow.score, data.score, data.title);
   }
   //runtime
   if (mediaType !== 'book') {
@@ -115,6 +117,8 @@ export const addEntry = (mediaType, store, year, data, meta) => {
     if (data.cost || data.cost === 0) {
       meta[mediaType].overall.cost.push(data.cost);
       meta[mediaType][year].cost.push(data.cost);
+      //Score high-low
+      meta[mediaType][year].highLow.cost = setHighLow(meta[mediaType][year].highLow.cost, data.cost, data.title);
     }
   } else if (mediaType === 'tv') {
     //TV Specific stats
@@ -126,6 +130,51 @@ export const addEntry = (mediaType, store, year, data, meta) => {
     meta['tv'][year].episodes += data.episodes;
     //TODO longest show by episodes and runtime stored as objects
     //When deleting will need to do some sorting to assign the values - too costly to do whenever showing stats page
+  } else if (mediaType === 'game') {
+    //Achievements
+    meta['game'][year].achievements.gained += data.achievementsGained;
+    meta['game'].overall.achievements.gained += data.achievementsGained;
+    meta['game'][year].achievements.total += data.achievementsTotal;
+    meta['game'].overall.achievements.total += data.achievementsTotal;
+    //Consoles
+    if (!meta['game'].overall.consoles[data.consoles]) {
+      meta['game'].overall.consoles[data.consoles] = 1;
+    } else {
+      meta['game'].overall.consoles[data.consoles]++;
+    }
+    if (!meta['game'][year].consoles[data.consoles]) {
+      meta['game'][year].consoles[data.consoles] = 1;
+    } else {
+      meta['game'][year].consoles[data.consoles]++;
+    }
+  } else if (mediaType === 'book') {
+    //Format
+    meta['book'][year].format[data.format]++;
+    meta['book'].overall.format[data.format]++;
+    //Type
+    meta['book'][year].type[data.type]++;
+    meta['book'].overall.type[data.type]++;
+    //Pages
+    if (data.pages) {
+      meta['book'][year].pages.push(data.pages);
+      meta['book'].overall.pages.push(data.pages);
+    }
+    //Words
+    if (data.words) {
+      meta['book'][year].words.push(data.words);
+      meta['book'].overall.words.push(data.words);
+    }
+    //Authors
+    if (!meta['book'][year].authors[data.author]) {
+      meta['book'][year].authors[data.author] = 1;
+    } else {
+      meta['book'][year].authors[data.author]++;
+    }
+    if (!meta['book'].overall.authors[data.author]) {
+      meta['book'].overall.authors[data.author] = 1;
+    } else {
+      meta['book'].overall.authors[data.author]++;
+    }
   }
   return { store: store, tempMeta: meta };
 }
@@ -202,6 +251,29 @@ export const getStore = (type) => {
   }
 }
 
+//TODO - delete function
+const setHighLow = (entry, value, title) => {
+  //High
+  if (!Object.keys(entry.high).length || entry.high.val < value) {
+    entry.high = {
+      'val': value,
+      'titles': [title]
+    }
+  } else if (entry.high.val === value) {
+    entry.high.titles.push(title);
+  }
+  //Low
+  if (!Object.keys(entry.low).length || entry.low.val > value) {
+    entry.low = {
+      'val': value,
+      'titles': [title]
+    }
+  } else if (entry.low.val === value) {
+    entry.low.titles.push(title);
+  }
+  return entry;
+}
+
 /**
  * Removes an entry from the given media type.
  * @param {String} mediaType - The type of media to remove from;
@@ -226,7 +298,7 @@ export const deleteEntry = (mediaType, store, entryId, year, meta) => {
         break;
     }
     store[year].splice(i, 1);
-    //TODO calculate meta stats
+    //TODO calculate high-low stats
     //General stats
     //Update total
     meta[mediaType].overall.total--;
@@ -235,11 +307,15 @@ export const deleteEntry = (mediaType, store, entryId, year, meta) => {
     meta[mediaType][year].release[val.newRelease ? 'new' : 'old']--;
     meta[mediaType].overall.release[val.newRelease ? 'new' : 'old']--;
     //Score array
-    meta[mediaType][year].scores.splice(meta[mediaType][year].scores.indexOf(val.score), 1);
-    meta[mediaType].overall.scores.splice(meta[mediaType].overall.scores.indexOf(val.score), 1);
+    if (val.score) {
+      meta[mediaType][year].scores.splice(meta[mediaType][year].scores.indexOf(val.score), 1);
+      meta[mediaType].overall.scores.splice(meta[mediaType].overall.scores.indexOf(val.score), 1);
+    }
     //Runtime
-    meta[mediaType][year].runtimes.splice(meta[mediaType][year].runtimes.indexOf(val.time), 1);
-    meta[mediaType].overall.runtimes.splice(meta[mediaType].overall.runtimes.indexOf(val.time), 1);
+    if (mediaType !== 'book') {
+      meta[mediaType][year].runtimes.splice(meta[mediaType][year].runtimes.indexOf(val.time), 1);
+      meta[mediaType].overall.runtimes.splice(meta[mediaType].overall.runtimes.indexOf(val.time), 1);
+    }
     if (mediaType === 'movie') {
       //Location
       meta['movie'].overall.locations[val.location]--;
@@ -264,6 +340,35 @@ export const deleteEntry = (mediaType, store, entryId, year, meta) => {
       //Total episodes
       meta['tv'].overall.episodes -= val.episodes;
       meta['tv'][year].episodes -= val.episodes;
+    } else if (mediaType === 'game') {
+      //Achievements
+      meta['game'][year].achievements.gained -= val.achievementsGained;
+      meta['game'].overall.achievements.gained -= val.achievementsGained;
+      meta['game'][year].achievements.total -= val.achievementsTotal;
+      meta['game'].overall.achievements.total -= val.achievementsTotal;
+      //Consoles
+      meta['game'].overall.consoles[val.consoles]--;
+      meta['game'][year].consoles[val.consoles]--;
+    } else if (mediaType === 'book') {
+      //Format
+      meta['book'][year].format[val.format]--;
+      meta['book'].overall.format[val.format]--;
+      //Type
+      meta['book'][year].type[val.type]--;
+      meta['book'].overall.type[val.type]--;
+      //Pages
+      if (val.pages) {
+        meta['book'][year].pages.splice(meta['book'][year].pages.indexOf(val.pages), 1);
+        meta['book'].overall.pages.splice(meta['book'].overall.pages.indexOf(val.pages), 1);
+      }
+      //Words
+      if (val.words) {
+        meta['book'][year].words.splice(meta['book'][year].words.indexOf(val.words), 1);
+        meta['book'].overall.words.splice(meta['book'].overall.words.indexOf(val.words), 1);
+      }
+      //Authors
+      meta['book'].overall.authors[val.author]--;
+      meta['book'][year].authors[val.author]--;
     }
 
     return { store: store, tempMeta: meta };
@@ -313,6 +418,24 @@ export const statDefaults = {
     },
     'cost': [],
     'runtimes': [],
+    'highLow': {
+      'score': {
+        'high': {},
+        'low': {},
+      },
+      'cost': {
+        'high': {},
+        'low': {}
+      },
+      'runtimes': {
+        'high': {},
+        'low': {}
+      },
+      'rank': {
+        'high': {},
+        'low': {}
+      }
+    }
   },
   'tv': {
     'total': 0,
@@ -324,6 +447,28 @@ export const statDefaults = {
     'episodes': 0,
     'seasons': 0,
     'runtimes': [],
+    'highLow': {
+      'score': {
+        'high': {},
+        'low': {},
+      },
+      'runtimes': {
+        'high': {},
+        'low': {}
+      },
+      'rank': {
+        'high': {},
+        'low': {}
+      },
+      'episodes': {
+        'high': {},
+        'low': {}
+      },
+      'seasons': {
+        'high': {},
+        'low': {}
+      }
+    }
   },
   'game': {
     'total': 0,
@@ -337,7 +482,24 @@ export const statDefaults = {
     'achievements': {
       'gained': 0,
       'total': 0,
-      'average': 0,
+    },
+    'highLow': {
+      'score': {
+        'high': {},
+        'low': {},
+      },
+      'runtimes': {
+        'high': {},
+        'low': {}
+      },
+      'rank': {
+        'high': {},
+        'low': {}
+      },
+      'achievements': {
+        'high': {},
+        'low': {}
+      },
     }
   },
   'book': {
@@ -348,7 +510,9 @@ export const statDefaults = {
       'old': 0,
     },
     'days': 0,
-    'pages': 0,
+    'pages': [],
+    'words': [],
+    'authors': {},
     'format': {
       'eBook': 0,
       'Physical': 0,
@@ -372,6 +536,28 @@ export const statDefaults = {
       'Religious Book': 0,
       'Web Novel': 0,
       'Interactive': 0
+    },
+    'highLow': {
+      'score': {
+        'high': {},
+        'low': {},
+      },
+      'runtimes': {
+        'high': {},
+        'low': {}
+      },
+      'rank': {
+        'high': {},
+        'low': {}
+      },
+      'pages': {
+        'high': {},
+        'low': {}
+      },
+      'words': {
+        'high': {},
+        'low': {}
+      }
     }
   }
 }

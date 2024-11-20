@@ -12,7 +12,7 @@ import { NewUserText } from "../components/utilities.jsx";
  * @returns {JSX.Element}
  */
 const ViewTable = () => {
-  const { type, year, updateFlag } = mainStore();
+  const { type, year, updateFlag, setSelectedEntry } = mainStore();
   const { movies, shows, games, books, settings } = driveData();
   const [ rowData, setRowData ] = useState(movies?.[year?.value]);
   const [ modalOpen, setModalOpen ] = useState(false);
@@ -147,10 +147,10 @@ const ViewTable = () => {
       {(checkColVis('type') && type.value === 'book') && <Column field={'type'} header={'Type'} body={handleEmptyCell} sortable/>}
       {(checkColVis('time') && type.value !== 'book') && <Column field={'time'} header={`Total ${type.value === 'game' ? "Playtime" : "Runtime"}`} body={handleEmptyCell} sortable/>}
       {checkColVis('notes') && <Column field={'notes'} header={'Notes'} body={handleEmptyCell}/>}
-      <Column header={'View'} body={(v) => {return <button className={'view iconOnly primary'} onClick={() => {setModalOpen(v)}} title={`View ${v.title}`}/>}}/>
+      <Column header={'View'} body={(v) => {return <button className={'view iconOnly primary'} onClick={() => {setSelectedEntry(v); setModalOpen(true)}} title={`View ${v.title}`}/>}}/>
     </DataTable>
-    <ViewModal open={modalOpen !== false} handleClose={() => {setModalOpen(false)}}
-               data={modalOpen} type={type}/>
+    <ViewModal open={modalOpen} handleClose={() => {setModalOpen(false); setSelectedEntry(false);}}
+               type={type}/>
   </>
 }
 

@@ -235,7 +235,6 @@ const Login = () => {
         field: 'files(id, name)',
       });
 
-      // console.log('Fetch response:', response)
       if (response?.result?.files?.length === 0) {
         //Create the file if it does not exist
         await gapi.client.request({
