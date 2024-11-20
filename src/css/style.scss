@@ -64,6 +64,22 @@ body {
   min-height: calc( 100% - 92px );
 }
 
+//Tabs
+#tabNav {
+  @media (max-width: $breakMD) {
+    margin-bottom: $unit-3;
+  }
+}
+#mobileSelects {
+  margin-bottom: $unit-6;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $unit-2;
+  @media (max-width: $breakXS) {
+    grid-template-columns: 1fr;
+  }
+}
+
 //Stats page
 #statPage {
   display: grid;
@@ -73,6 +89,9 @@ body {
     th {
       text-align: left;
     }
+  }
+  @media (max-width: $breakLG) {
+    grid-template-columns: 1fr;
   }
 }
 
