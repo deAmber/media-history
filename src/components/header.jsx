@@ -51,16 +51,15 @@ const Header = () => {
     })
   }
 //TODO: add reset to default button per fieldset
-  //TODO add darkmode switch
   //TODO: will need to recalculate new release stats if any of those settings change
   return (
     <div role={'heading'} className={'header'}>
       <h1>Media History</h1>
       {user && <>
-        <button className={'iconOnly primary sm settings'} title={'Open settings'} onClick={() => {
+        <button className={'iconOnly primary md settings'} title={'Open settings'} onClick={() => {
           setOpenSettings(true)
         }}/>
-        <button className={'iconOnly sm logout'} title={'Log out'} onClick={() => {
+        <button className={'iconOnly md logout'} title={'Log out'} onClick={() => {
           gapi.auth2.getAuthInstance().signOut().then(() => {
             //Sign out of Google
             gapi.auth2.getAuthInstance().signOut();

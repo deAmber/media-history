@@ -12,7 +12,7 @@ function App() {
   const { user, loaded } = mainStore();
 
   return (
-    <Router>
+    <Router basename={'/media-history'}>
       <Header/>
       <div role={'main'} id={'main'}>
         {user ? (<>

@@ -140,7 +140,9 @@ export const addEntry = (mediaType, store, year, data, meta) => {
       meta[mediaType].overall.cost.push(data.cost);
       meta[mediaType][year].cost.push(data.cost);
       //Score high-low
-      meta[mediaType][year].highLow.cost = setHighLow(meta[mediaType][year].highLow.cost, data.cost, data.title);
+      if (data.cost !== 0) {
+        meta[mediaType][year].highLow.cost = setHighLow(meta[mediaType][year].highLow.cost, data.cost, data.title);
+      }
     }
   } else if (mediaType === 'tv') {
     //TV Specific stats

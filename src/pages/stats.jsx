@@ -215,12 +215,12 @@ const Stats = ({}) => {
         </tr> : <></>}
         {type.value !== 'book' && <>
           {metaYear?.highLow.runtimes.high?.val ? <tr>
-            <td>Highest Runtime</td>
+            <td>Longest {type.value === 'game' ? 'Playtime' : 'Runtime'}</td>
             <td>{metaYear && formatTime(metaYear.highLow.runtimes.high.val)}</td>
             <td>{metaYear && metaYear.highLow.runtimes.high.titles.join(', ')}</td>
           </tr> : <></>}
           {metaYear?.highLow.runtimes.low?.val ? <tr>
-            <td>Lowest Runtime</td>
+            <td>Shortest {type.value === 'game' ? 'Playtime' : 'Runtime'}</td>
             <td>{metaYear && formatTime(metaYear.highLow.runtimes.low.val)}</td>
             <td>{metaYear && metaYear.highLow.runtimes.low.titles.join(', ')}</td>
           </tr> : <></>}
@@ -231,7 +231,7 @@ const Stats = ({}) => {
             <td>${metaYear && metaYear.highLow.cost.high.val.toFixed(2)}</td>
             <td>{metaYear && metaYear.highLow.cost.high.titles.join(', ')}</td>
           </tr> : <></>}
-          {metaYear?.highLow.cost.low?.val ? <tr>
+          {(metaYear?.highLow.cost.low?.val && metaYear?.highLow.cost.low?.val > -1) ? <tr>
             <td>Lowest Cost</td>
             <td>${metaYear && metaYear.highLow.cost.low.val.toFixed(2)}</td>
             <td>{metaYear && metaYear.highLow.cost.low.titles.join(', ')}</td>

@@ -51,10 +51,21 @@ body {
   background-image: url("../images/arrows/logout.svg");
   content: "";
 }
+@media (max-width: 768px) {
+  .header {
+    padding: 1.5rem;
+  }
+}
 
 #main {
   padding: 1.5rem 48px;
-  height: calc(100% - 88px);
+  height: calc(100% - 104px);
+}
+@media (max-width: 768px) {
+  #main {
+    padding: 1.5rem;
+    height: calc(100% - 82px);
+  }
 }
 
 .pageContent {

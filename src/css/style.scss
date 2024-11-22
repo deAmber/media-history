@@ -52,12 +52,19 @@ body {
     background-image: url("../images/arrows/logout.svg");
     content: "";
   }
+  @media (max-width: $breakMD) {
+    padding: $unit-6;
+  }
 }
 
 //Body
 #main {
   padding: $unit-6 $unit-12;
-  height: calc(100% - 88px);
+  height: calc(100% - 104px);
+  @media (max-width: $breakMD) {
+    padding: $unit-6;
+    height: calc(100% - 82px);
+  }
 }
 
 .pageContent {
