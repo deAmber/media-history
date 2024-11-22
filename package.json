@@ -2,6 +2,7 @@
   "name": "media-history",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://deamber.github.io/media-history/",
   "type": "module",
   "scripts": {
     "dev": "vite",

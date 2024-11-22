@@ -5,6 +5,7 @@ import path from "path";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: "https://deamber.github.io/media-history/",
   resolve: {
     alias: {
       '@css': path.resolve(__dirname, './src/css'),
