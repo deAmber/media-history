@@ -6,6 +6,7 @@ import mainStore from "../stores/mainStore.js";
 import { Tooltip } from 'react-tooltip';
 import ViewModal from "../components/viewModal.jsx";
 import { NewUserText } from "../components/utilities.jsx";
+import { formatTime } from "../utilities.js";
 
 /**
  * Renders a Datatable showing core columns for the selected data type and year.
@@ -89,6 +90,8 @@ const ViewTable = () => {
         <span className={`chip score ${colour}`} data-tooltip-id={`tooltip-score-${parseInt(raw)}`} data-tooltip-content={settings.ratingDescriptions[parseInt(raw)-1]}>{raw}</span>
         <Tooltip id={`tooltip-score-${parseInt(raw)}`} className={colour}/>
       </>
+    } else if (column.field === 'minutes') {
+      return formatTime(raw);
     }
     return raw;
   }
@@ -145,7 +148,7 @@ const ViewTable = () => {
       {(checkColVis('words') && type.value === 'book') && <Column field={'words'} header={'Words'} body={handleEmptyCell} sortable/>}
       {(checkColVis('format') && type.value === 'book') && <Column field={'format'} header={'Format'} body={handleEmptyCell} sortable/>}
       {(checkColVis('type') && type.value === 'book') && <Column field={'type'} header={'Type'} body={handleEmptyCell} sortable/>}
-      {(checkColVis('time') && type.value !== 'book') && <Column field={'time'} header={`Total ${type.value === 'game' ? "Playtime" : "Runtime"}`} body={handleEmptyCell} sortable/>}
+      {(checkColVis('time') && type.value !== 'book') && <Column field={'minutes'} header={`Total ${type.value === 'game' ? "Playtime" : "Runtime"}`} body={handleEmptyCell} sortable/>}
       {checkColVis('notes') && <Column field={'notes'} header={'Notes'} body={handleEmptyCell}/>}
       <Column header={'View'} body={(v) => {return <button className={'view iconOnly primary'} onClick={() => {setSelectedEntry(v); setModalOpen(true)}} title={`View ${v.title}`}/>}}/>
     </DataTable>

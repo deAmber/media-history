@@ -67,13 +67,11 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
     if (editType.value !== 'book') {
       let hours = parseInt(data.hours || 0);
       let minutes = parseInt(data.minutes);
-      if (minutes > 60) {
-        hours = hours + parseInt(minutes / 60);
-        minutes = minutes % 60;
+      if (hours > 0) {
+        minutes = minutes + (hours * 60);
       }
-      data.time = `${hours}:${minutes < 10 ? `0${minutes}` : minutes}`;
+      data.minutes = minutes
       delete data.hours;
-      delete data.minutes;
     }
     //TODO: days to watch/read
     if (editType.value !== 'movie') {
@@ -107,9 +105,7 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
         data.cost = null;
       }
     } else if (editType.value === 'tv') {
-      //TODO: Handling multiple seasons (i.e. 1-3)
       data.seasons = tvSeasons.map(v => parseFloat(v.value));
-      console.log(data.seasons)
       data.episodes = parseInt(data.episodes);
     } else if (editType.value === 'game') {
       //Add console to meta list
@@ -290,8 +286,8 @@ const Edit = ({data = false, closeButton = () => {}, forceEditType = false}) => 
           </>}
           {editType.value !== 'book' && <fieldset className={'inputSplit'}>
             <legend>Total {editType.value === 'game' ? "Playtime" : "Runtime"}</legend>
-            <InputGroup id={'hours'} title={'Hours'} type={'number'} min={0} step={1} defaultValue={data.time ? data.time.split(":")[0] : null}/>
-            <InputGroup id={'minutes'} title={'Minutes'} required type={'number'} min={0} step={1} defaultValue={data.time ? data.time.split(":")[1] : null}/>
+            <InputGroup id={'hours'} title={'Hours'} type={'number'} min={0} step={1} defaultValue={(data.minutes && data.minutes > 60) ? Math.floor(data.minutes / 60) : null}/>
+            <InputGroup id={'minutes'} title={'Minutes'} required type={'number'} min={0} step={1} defaultValue={data.minutes ? data.minutes % 60 : null}/>
           </fieldset>}
           <InputGroup id={'notes'} title={'Notes'} type={"text"} defaultValue={data?.notes ? data.notes : null}/>
         </form>

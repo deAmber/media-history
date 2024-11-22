@@ -5,7 +5,7 @@ import { useState } from "react";
 import MicroModal from "react-micro-modal";
 import Loader from "../components/loader.jsx";
 import Edit from "./edit.jsx";
-import { getStore, deleteEntry, updateCloudAndStores } from "../utilities.js";
+import {getStore, deleteEntry, updateCloudAndStores, formatTime} from "../utilities.js";
 
 /**
  * MicroModal view entry content
@@ -99,7 +99,7 @@ const ViewModal = ({open, handleClose, type}) => {
           {selectedEntry.format && <div><span className={'field'}>Format</span><span className={'value'}>{selectedEntry.format}</span></div>}
           {selectedEntry.type && <div><span className={'field'}>Type</span><span className={'value'}>{selectedEntry.type}</span></div>}
         </>}
-        {(type.value !== 'book' && selectedEntry.time) && <div><span className={'field'}>Total {type.value === 'game' ? "Playtime" : "Runtime"}</span><span className={'value'}>{selectedEntry.time}</span></div>}
+        {(type.value !== 'book' && selectedEntry.time) && <div><span className={'field'}>Total {type.value === 'game' ? "Playtime" : "Runtime"}</span><span className={'value'}>{formatTime(selectedEntry.minutes)}</span></div>}
         {selectedEntry.notes && <div><span className={'field'}>Notes</span><span className={'value'}>{selectedEntry.notes}</span></div>}
       </div>
       <div className={'footer'}>

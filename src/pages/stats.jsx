@@ -1,41 +1,24 @@
 import driveData from "../stores/driveData.js";
 import mainStore from "../stores/mainStore.js";
 import { NewUserText } from "../components/utilities.jsx";
+import { formatTime } from "../utilities.js";
 
 /**
  * Calculates the total or average runtime from an array of durations.
- * @param {Array} timeArr - Array of duration strings.
+ * @param {Array} arr - Array of numbers.
  * @param {Boolean} average - Whether to average the results.
- * @param {Number} [length] - Total to divide by, defaults to timeArr length.
- * @returns {string}
+ * @param {Number} [forceLength] - Total to divide by, defaults to timeArr length.
+ * @returns {Number}
  */
-const runtimes = (timeArr, average = false, length = false) => {
-  if (timeArr.length === 0) {
-    return '-';
+const totalAverage = (arr, average = false, forceLength = false) => {
+  let total = arr.reduce((p, c) => p + c);
+  if (!average) {
+    return total;
   }
-  if (!length) {
-    length = timeArr.length
+  if (forceLength === false) {
+    forceLength = arr.length;
   }
-  //Total all minutes and hours
-  let total = timeArr.reduce((prev, curr) => {
-    let split = curr.split(':').map(v => parseInt(v));
-    return [prev[0] + split[0], prev[1] + split[1]];
-  }, [0, 0]);
-  //Convert overflow minutes to hours
-  total[0] = total[0] + Math.floor(total[1] / 60);
-  total[1] = Math.floor(total[1] % 60);
-  //Average both scores and resettle minutes to hours
-  if (average) {
-    let hr = total[0] / length;
-    let min = total[1] / length;
-    min += (hr % 1) * 60;
-    hr = Math.floor(hr) + Math.floor(min/60);
-    min = Math.floor(min % 60);
-    total[0] = hr;
-    total[1] = min;
-  }
-  //Return duration string
-  return total[0] + `:${total[1] < 10 ? '0' : ""}${total[1]}`;
+  return total / forceLength;
 }
 
 const Stats = ({}) => {
@@ -88,18 +71,18 @@ const Stats = ({}) => {
           <td>{metaPreviousYear.scores.length === 0 ? 0 : (metaPreviousYear.scores.reduce((prev, curr) => prev + curr) / metaPreviousYear.scores.length).toFixed(2)}</td>}
         <td>{metaOverall.scores.length === 0 ? 0 : (metaOverall.scores.reduce((prev, curr) => prev + curr) / metaOverall.scores.length).toFixed(2)}</td>
       </tr>
-      {type.value !== 'book' && <>
+      {(type.value !== 'book' && metaYear?.runtimes?.length > 0) && <>
         <tr>
           <td>Total {type.value === 'game' ? 'Playtime' : 'Runtime'}</td>
-          {metaYear && <td>{runtimes(metaYear.runtimes)}</td>}
-          {metaPreviousYear && <td>{runtimes(metaPreviousYear.runtimes)}</td>}
-          <td>{runtimes(metaOverall.runtimes)}</td>
+          {metaYear && <td>{formatTime(totalAverage(metaYear.runtimes))}</td>}
+          {metaPreviousYear && <td>{formatTime(totalAverage(metaPreviousYear.runtimes))}</td>}
+          <td>{formatTime(totalAverage(metaOverall.runtimes))}</td>
         </tr>
         <tr>
           <td>Average {type.value === 'game' ? 'Playtime' : 'Runtime'} per {type.value.substring(0, type.value.length)}</td>
-          {metaYear && <td>{runtimes(metaYear.runtimes, true)}</td>}
-          {metaPreviousYear && <td>{runtimes(metaPreviousYear.runtimes, true)}</td>}
-          <td>{runtimes(metaOverall.runtimes, true)}</td>
+          {metaYear && <td>{formatTime(totalAverage(metaYear.runtimes, true))}</td>}
+          {metaPreviousYear && <td>{formatTime(totalAverage(metaPreviousYear.runtimes, true))}</td>}
+          <td>{formatTime(totalAverage(metaOverall.runtimes, true))}</td>
         </tr>
       </>}
       {type.value === 'movie' && <>
@@ -153,9 +136,9 @@ const Stats = ({}) => {
         </tr>
         <tr>
           <td>Average Episode Runtime</td>
-          {metaYear && <td>{runtimes(metaYear.runtimes, true, metaYear.episodes)}</td>}
-          {metaPreviousYear && <td>{runtimes(metaPreviousYear.runtimes, true, metaPreviousYear.episodes)}</td>}
-          <td>{runtimes(metaOverall.runtimes, true, metaOverall.episodes)}</td>
+          {metaYear && <td>{totalAverage(metaYear.runtimes, true, metaYear.episodes)}</td>}
+          {metaPreviousYear && <td>{totalAverage(metaPreviousYear.runtimes, true, metaPreviousYear.episodes)}</td>}
+          <td>{totalAverage(metaOverall.runtimes, true, metaOverall.episodes)}</td>
         </tr>
       </>}
       {type.value === 'game' && <>
@@ -220,25 +203,25 @@ const Stats = ({}) => {
         <tr><th></th><th>Title</th><th>Value</th></tr>
       </thead>
       <tbody>
-        {metaYear?.highLow.score?.high ? <tr>
+        {metaYear.highLow.score?.high ? <tr>
           <td>Highest Score</td>
           <td>{metaYear && metaYear.highLow.score.high.val}</td>
           <td>{metaYear && metaYear.highLow.score.high.titles.join(', ')}</td>
         </tr> : <></>}
-        {metaYear?.highLow.score?.low ? <tr>
+        {metaYear.highLow.score?.low ? <tr>
           <td>Lowest Score</td>
           <td>{metaYear && metaYear.highLow.score.low.val}</td>
           <td>{metaYear && metaYear.highLow.score.low.titles.join(', ')}</td>
         </tr> : <></>}
         {type.value !== 'book' && <>
           {metaYear?.highLow.runtimes.high?.val ? <tr>
-            <td>Highest Cost</td>
-            <td>${metaYear && metaYear.highLow.runtimes.high.val}</td>
+            <td>Highest Runtime</td>
+            <td>{metaYear && formatTime(metaYear.highLow.runtimes.high.val)}</td>
             <td>{metaYear && metaYear.highLow.runtimes.high.titles.join(', ')}</td>
           </tr> : <></>}
           {metaYear?.highLow.runtimes.low?.val ? <tr>
-            <td>Lowest Cost</td>
-            <td>${metaYear && metaYear.highLow.runtimes.low.val}</td>
+            <td>Lowest Runtime</td>
+            <td>{metaYear && formatTime(metaYear.highLow.runtimes.low.val)}</td>
             <td>{metaYear && metaYear.highLow.runtimes.low.titles.join(', ')}</td>
           </tr> : <></>}
         </>}
@@ -260,7 +243,7 @@ const Stats = ({}) => {
 
   return <div id={'statPage'}>
     {statTable}
-    {highLowTable}
+    {metaYear && highLowTable}
   </div>
 }
 

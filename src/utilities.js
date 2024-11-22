@@ -3,6 +3,26 @@ import mainStore from "./stores/mainStore.js";
 import driveData from "./stores/driveData.js";
 
 /**
+ * Converts minutes into a duration string (XX:XX).
+ * @param {Number} minutes - Total number of minutes.
+ * @returns {String}
+ */
+export const formatTime = (minutes) => {
+  let hours = 0;
+  if (minutes >= 60) {
+    hours = Math.floor(minutes / 60);
+    minutes = minutes % 60;
+  }
+  const strNum = (num) => {
+    if (num < 10) {
+      return '0' + num;
+    }
+    return parseInt(num).toString();
+  }
+  return `${strNum(hours)}:${strNum(minutes)}`
+}
+
+/**
  * Updates a given file with the given content.
  * @param {String} fileID - ID of the file to update.
  * @param {*} rawContent - Raw data to send.
@@ -77,8 +97,10 @@ export const addEntry = (mediaType, store, year, data, meta) => {
   }
   //runtime
   if (mediaType !== 'book') {
-    meta[mediaType].overall.runtimes.push(data.time);
-    meta[mediaType][year].runtimes.push(data.time);
+    meta[mediaType].overall.runtimes.push(data.minutes);
+    meta[mediaType][year].runtimes.push(data.minutes);
+    //Runtime High Low
+    meta[mediaType][year].highLow.runtimes = setHighLow(meta[mediaType][year].highLow.runtimes, data.minutes, data.title);
   }
   //Movie specific stats
   if (mediaType === 'movie') {
@@ -251,7 +273,13 @@ export const getStore = (type) => {
   }
 }
 
-//TODO - delete function
+/**
+ * Adds or sets the highLow stat if applicable to this entry.
+ * @param {Object} entry - High-low entry.
+ * @param {Number} value - Raw value for calculating high-low score.
+ * @param {String} title - Title of the entry.
+ * @returns {Object} Recalculate entry.
+ */
 const setHighLow = (entry, value, title) => {
   //High
   if (!Object.keys(entry.high).length || entry.high.val < value) {
@@ -270,6 +298,56 @@ const setHighLow = (entry, value, title) => {
     }
   } else if (entry.low.val === value) {
     entry.low.titles.push(title);
+  }
+  return entry;
+}
+
+/**
+ * Removes from highLow stat if applicable to this entry.
+ * @param {Object} entry - High-low entry.
+ * @param {Number} value - Raw value for calculating high-low score.
+ * @param {String} title - Title of the entry.
+ * @param {Object} allYear - All year stats - if removing the top or bottom used to find new highLow.
+ * @returns {Object} Recalculate entry.
+ */
+const resetHighLow = (entry, value, title, allYear, dataPoint) => {
+  //High
+  if (entry.high.val === value) {
+    if (entry.high.titles.length === 1) {
+      //Calculate new high value(s)
+      let val = 0, titles = [];
+      allYear.forEach(v => {
+        if (v[dataPoint] > val) {
+          val = v[dataPoint];
+          titles = [v.title]
+        } else if (v[dataPoint] === val) {
+          titles.push(v.title);
+        }
+      });
+      entry.high = {val: val, titles: titles};
+    } else {
+      //Remove title from list
+      entry.high.titles.splice(entry.high.titles.indexOf(title), 1);
+    }
+  }
+  //Low
+  if (entry.low.val === value) {
+    if (entry.low.titles.length === 1) {
+      //Calculate new low value(s)
+      let val = Math.pow(10, 1000), titles = [];
+      allYear.forEach(v => {
+        if (v[dataPoint] < val) {
+          val = v[dataPoint];
+          titles = [v.title]
+        } else if (v[dataPoint] === val) {
+          titles.push(v.title);
+        }
+      });
+      entry.low = {val: val, titles: titles};
+    } else {
+      //Remove title from list
+      entry.high.titles.splice(entry.high.titles.indexOf(title), 1);
+    }
   }
   return entry;
 }
@@ -310,11 +388,15 @@ export const deleteEntry = (mediaType, store, entryId, year, meta) => {
     if (val.score) {
       meta[mediaType][year].scores.splice(meta[mediaType][year].scores.indexOf(val.score), 1);
       meta[mediaType].overall.scores.splice(meta[mediaType].overall.scores.indexOf(val.score), 1);
+      //Score high-low
+      meta[mediaType][year].highLow.score = resetHighLow(meta[mediaType][year].highLow.score, val.score, val.title, store[year], 'score');
     }
     //Runtime
     if (mediaType !== 'book') {
-      meta[mediaType][year].runtimes.splice(meta[mediaType][year].runtimes.indexOf(val.time), 1);
-      meta[mediaType].overall.runtimes.splice(meta[mediaType].overall.runtimes.indexOf(val.time), 1);
+      meta[mediaType][year].runtimes.splice(meta[mediaType][year].runtimes.indexOf(val.minutes), 1);
+      meta[mediaType].overall.runtimes.splice(meta[mediaType].overall.runtimes.indexOf(val.minutes), 1);
+      //Runtime High Low
+      meta[mediaType][year].highLow.runtimes = resetHighLow(meta[mediaType][year].highLow.runtimes, val.minutes, val.title, store[year], 'minutes');
     }
     if (mediaType === 'movie') {
       //Location
@@ -333,6 +415,8 @@ export const deleteEntry = (mediaType, store, entryId, year, meta) => {
       //cost
       meta[mediaType][year].cost.splice(meta[mediaType][year].cost.indexOf(val.cost), 1);
       meta[mediaType].overall.cost.splice(meta[mediaType].overall.cost.indexOf(val.cost), 1);
+      //Score high-low
+      meta[mediaType][year].highLow.cost = resetHighLow(meta[mediaType][year].highLow.cost, val.cost, val.title, store[year], 'cost');
     } else if (mediaType === 'tv') {
       //Total seasons
       meta['tv'].overall.seasons -= val.seasons.length;
