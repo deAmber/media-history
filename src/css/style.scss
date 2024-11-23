@@ -31,6 +31,12 @@ body {
   height: 100dvh;
 }
 
+//TODO: lock page scroll when modal open using useEffect on modalOpen useState
+#root.modalOpen {
+  max-height: 100%;
+  overflow: hidden;
+}
+
 //App header
 .header {
   width: 100%;

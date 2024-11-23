@@ -13,8 +13,16 @@ const Nav = () => {
   const [ addModal, setAddModal ] = useState(false);
   const [ mobile, setMobile ] = useState(false)
 
+  //Stops body scroll while modal is open
   useEffect(() => {
+    if (addModal) {
+      document.getElementById('root').classList.add('modalOpen');
+    } else {
+      document.getElementById('root').classList.remove('modalOpen');
+    }
+  }, [addModal]);
 
+  useEffect(() => {
     //Checks if screen size is mobile
     const handleResize = () => {
       if (screen.width <= 768) {

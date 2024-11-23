@@ -1,5 +1,5 @@
 import MicroModal from "react-micro-modal";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import mainStore from "../stores/mainStore.js";
 import driveData from "../stores/driveData.js";
 import Switch from "./formElements/switch.jsx";
@@ -12,10 +12,19 @@ import Description from "./description.jsx";
 const Header = () => {
   const { user, setUser, setLoaded } = mainStore()
   const { settings, setSettings, meta } = driveData();
-  const [ openSettings, setOpenSettings ] = useState();
+  const [ openSettings, setOpenSettings ] = useState(false);
   const [ openTab, setOpenTab ] = useState('generic');
   const [ tableTab, setTableTab ] = useState('movie');
   const [ saving, setSaving ] = useState(false);
+
+  //Stops body scroll while modal is open
+  useEffect(() => {
+    if (openSettings) {
+      document.getElementById('root').classList.add('modalOpen');
+    } else {
+      document.getElementById('root').classList.remove('modalOpen');
+    }
+  }, [openSettings]);
 
   const updateSettings = (data) => {
     let newSettings = settings;

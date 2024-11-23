@@ -502,6 +502,8 @@ button:not(.tab), .button {
   font-size: $font-size-small !important;
   font-weight: 400;
   line-height: $line-height-small;
+  max-width: 100vw
+;
   .react-tooltip-arrow {
     background-color: var(--content1) !important;
   }

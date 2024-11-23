@@ -18,6 +18,15 @@ const ViewTable = () => {
   const [ rowData, setRowData ] = useState(movies?.[year?.value]);
   const [ modalOpen, setModalOpen ] = useState(false);
 
+  //Stops body scroll while modal is open
+  useEffect(() => {
+    if (modalOpen) {
+      document.getElementById('root').classList.add('modalOpen');
+    } else {
+      document.getElementById('root').classList.remove('modalOpen');
+    }
+  }, [modalOpen]);
+
   //Updates the row date when the data changes (e.g. editing or adding an entry).
   useEffect(() => {
     if (year?.value) {
