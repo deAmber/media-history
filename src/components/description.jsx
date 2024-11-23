@@ -10,7 +10,7 @@ const Description = ({text = ""}) => {
   const id = useId();
   return <>
     <span className={'desc chip'} data-tooltip-id={id} data-tooltip-content={text}/>
-    <Tooltip id={id}/>
+    <Tooltip id={id} className={'content3'}/>
   </>
 }
 

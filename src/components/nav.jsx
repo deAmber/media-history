@@ -33,6 +33,18 @@ const Nav = () => {
     }
   }, []);
 
+  const selects = <><Select options={[
+    {value: "movie", label: "Movies"},
+    {value: "tv", label: "TV Shows"},
+    {value: "game", label: "Video Games"},
+    {value: "book", label: "Books"},
+  ]} value={type} onChange={setType} menuPortalTarget={document.body}
+                            unstyled isSearchable={false} classNamePrefix={'react-select'} className={'react-select-wrapper'}/>
+    {meta['years'] && <Select options={meta['years'].map(v => {return {label: v, value: v}})} isSearchable={meta['years'].length > 5}
+                              value={year} isDisabled={meta['years'].length === 0} menuPortalTarget={document.body}
+                              onChange={setYear} unstyled classNamePrefix={'react-select'} className={'react-select-wrapper'}/>}
+  </>
+
   return (<>
       <div role={'navigation'} id={'tabNav'} className={'tabGroup lg'}>
         <Link role={'link'} to={'/'} className={`tab ${location.pathname === '/' ? "active" : ""}`}>Home</Link>
@@ -43,27 +55,9 @@ const Nav = () => {
                     children={(handleClose) => <Edit closeButton={handleClose}/>}
                     closeOnOverlayClick={false}
         />
-        {!mobile && <><Select options={[
-          {value: "movie", label: "Movies"},
-          {value: "tv", label: "TV Shows"},
-          {value: "game", label: "Video Games"},
-          {value: "book", label: "Books"},
-        ]} value={type} onChange={setType} menuPortalTarget={document.body}
-                unstyled classNamePrefix={'react-select'} className={'react-select-wrapper'}/>
-        {meta['years'] && <Select options={meta['years'].map(v => {return {label: v, value: v}})}
-                value={year} isDisabled={meta['years'].length === 0} menuPortalTarget={document.body}
-                onChange={setYear} unstyled classNamePrefix={'react-select'} className={'react-select-wrapper'}/>}</>}
+        {!mobile && selects}
       </div>
-      {mobile && <div id={'mobileSelects'}><Select options={[
-        {value: "movie", label: "Movies"},
-        {value: "tv", label: "TV Shows"},
-        {value: "game", label: "Video Games"},
-        {value: "book", label: "Books"},
-      ]} value={type} onChange={setType} menuPortalTarget={document.body}
-                            unstyled classNamePrefix={'react-select'} className={'react-select-wrapper'}/>
-        {meta['years'] && <Select options={meta['years'].map(v => {return {label: v, value: v}})}
-                                  value={year} isDisabled={meta['years'].length === 0} menuPortalTarget={document.body}
-                                  onChange={setYear} unstyled classNamePrefix={'react-select'} className={'react-select-wrapper'}/>}</div>}
+      {mobile && <div id={'mobileSelects'}>{selects}</div>}
     </>
   )
 }

@@ -499,8 +499,23 @@ button:not(.tab), .button {
   border-radius: $rounded-medium !important;
   opacity: 1 !important;
   padding: $unit-1 $unit-3 !important;
+  font-size: $font-size-small !important;
+  font-weight: 400;
+  line-height: $line-height-small;
   .react-tooltip-arrow {
     background-color: var(--content1) !important;
+  }
+  &.content3 {
+    background-color: var(--content3) !important;
+    .react-tooltip-arrow {
+      background-color: var(--content3) !important;
+    }
+  }
+  &.primary {
+    background-color: var(--primary) !important;
+    .react-tooltip-arrow {
+      background-color: var(--primary) !important;
+    }
   }
   &.primary {
     background-color: var(--primary) !important;

@@ -486,9 +486,24 @@ button:not(.tab)::before, button:not(.tab)::after, .button::before, .button::aft
   border-radius: 0.75rem !important;
   opacity: 1 !important;
   padding: 0.25rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 400;
+  line-height: 1.25rem;
 }
 .react-tooltip .react-tooltip-arrow {
   background-color: var(--content1) !important;
+}
+.react-tooltip.content3 {
+  background-color: var(--content3) !important;
+}
+.react-tooltip.content3 .react-tooltip-arrow {
+  background-color: var(--content3) !important;
+}
+.react-tooltip.primary {
+  background-color: var(--primary) !important;
+}
+.react-tooltip.primary .react-tooltip-arrow {
+  background-color: var(--primary) !important;
 }
 .react-tooltip.primary {
   background-color: var(--primary) !important;
